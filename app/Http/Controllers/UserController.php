@@ -6,7 +6,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
-class UserController extends Controller
+class UserController
 {
     // --- AUTENTICACIÓN ---
 
@@ -47,7 +47,7 @@ class UserController extends Controller
 
     public function index()
     {
-        $this->authorizeSuperUsuario(); // Tu antiguo checkRoleAccess
+        $this->authorizeSuperAdmin(); // Tu antiguo checkRoleAccess
 
         // Obtiene todos los usuarios ordenados por ID
         $usuarios = User::orderBy('id', 'asc')->get();
@@ -56,14 +56,14 @@ class UserController extends Controller
 
     public function store(Request $request)
     {
-        $this->authorizeSuperUsuario();
+        $this->authorizeSuperAdmin();
 
         // Si el 'username' ya existe, Laravel redirige automáticamente con un error
         $validated = $request->validate([
             'nombre' => 'required|string|max:50',
             'username' => 'required|string|max:50|unique:usuarios,username',
             'password' => 'required|string|min:6',
-            'rol' => 'required|in:SuperUsuario,Administracion,ServicioTecnico,Almacen,Produccion',
+            'rol' => 'required|in:SuperAdmin,Administracion,ServicioTecnico,Almacen,Produccion',
         ]);
 
         // Se crea el usuario (la contraseña se hashea automáticamente gracias al Modelo)
@@ -76,12 +76,12 @@ class UserController extends Controller
 
     public function update(Request $request, User $usuario)
     {
-        $this->authorizeSuperUsuario();
+        $this->authorizeSuperAdmin();
 
         $validated = $request->validate([
             'nombre' => 'required|string|max:50',
             'username' => 'required|string|max:50|unique:usuarios,username,' . $usuario->id, // Ignora el ID actual
-            'rol' => 'required|in:SuperUsuario,Administracion,ServicioTecnico,Almacen,Produccion',
+            'rol' => 'required|in:SuperAdmin,Administracion,ServicioTecnico,Almacen,Produccion',
             'password' => 'nullable|string|min:6', // Nullable: solo valida si se envía
         ]);
 
@@ -97,8 +97,8 @@ class UserController extends Controller
     }
 
     // Método privado temporal para emular tu checkRoleAccess
-    private function authorizeSuperUsuario()
+    private function authorizeSuperAdmin()
     {
-        abort_unless(Auth::check() && Auth::user()->rol === 'SuperUsuario', 403, 'Acceso denegado.');
+        abort_unless(Auth::check() && Auth::user()->rol === 'SuperAdmin', 403, 'Acceso denegado.');
     }
 }
