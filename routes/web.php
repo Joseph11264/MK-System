@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\RequisicionController;
+use App\Http\Controllers\ServicioTecnicoController;
 
 /*
 |--------------------------------------------------------------------------
@@ -33,9 +34,13 @@ Route::middleware('auth')->group(function () {
     Route::post('/usuarios', [UserController::class, 'store'])->name('usuarios.store');
     Route::put('/usuarios/{usuario}', [UserController::class, 'update'])->name('usuarios.update');
 
+
     // --- MÓDULO DE REQUISICIONES ---
     // ¡Esta única línea crea 7 rutas automáticamente! (index, create, store, show, edit, update, destroy)
     Route::resource('requisiciones', RequisicionController::class);
+    Route::resource('st', ServicioTecnicoController::class);
+
+    Route::resource('productos', ProductoController::class);
     
     // Ruta personalizada adicional para avanzar el estado rápidamente
     Route::patch('requisiciones/{requisicion}/avanzar-estado', [RequisicionController::class, 'avanzarStatus'])

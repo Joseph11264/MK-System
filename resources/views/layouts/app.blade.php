@@ -13,7 +13,7 @@
 
     <header class="main-header d-flex justify-content-between align-items-center p-3 bg-dark text-white">
         <section class="logo-area">
-            SISTEMA ADMINISTRATIVO <span class="text-primary">DE ALMACÉN</span>
+            SISTEMA ADMINISTRATIVO <span class="text-primary">DE REQUISICIONES</span>
         </section>
         
         <section class="header-right-group d-flex align-items-center gap-3">
@@ -41,10 +41,10 @@
                 </li>
 
                 <li class="nav-item mb-2">
-                    <a class="nav-link text-dark rounded" href="#">🔧 Servicio Técnico</a>
+                    <a class="nav-link text-dark rounded" href="{{ route('st.index') }}">🔧 Servicio Técnico</a>
                 </li>
                 <li class="nav-item mb-2">
-                    <a class="nav-link text-dark rounded" href="#">📦 Agregar Productos</a>
+                    <a class="nav-link text-dark rounded" href="{{ route('st.create') }}">📦 Agregar Productos</a>
                 </li>
                 
                 @if(auth()->user() && auth()->user()->rol === 'SuperAdmin')

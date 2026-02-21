@@ -8,7 +8,8 @@ Sistema administrativo web desarrollado en Laravel para la gestión de almacén.
 Principales módulos:
 - Requisiciones: Creación, consulta y cambio de estatus (Pendiente, En Curso, Completado).
 - Usuarios: Gestión de acceso y roles (CRUD).
-- Servicio Técnico: (En desarrollo) Gestión de reparaciones.
+- Servicio Técnico: Gestión de tickets de reparación, asignación de técnicos y repuestos.
+- Productos: Catálogo base de productos/repuestos para usar en los tickets.
 
 2. ESTRUCTURA DE CÓDIGO RELEVANTE
 ---------------------------------
@@ -30,6 +31,19 @@ A) Refactorización de Roles de Usuario (UserController.php):
 
 B) Documentación:
    - Creación de este archivo Readme.txt en la raíz del proyecto.
+
+C) Nuevo Módulo: Servicio Técnico (ST)
+   - Migraciones: Tablas 'requisicion_st' y 'detalles_requisiciones_st'.
+   - Modelos: RequisicionSt, DetalleRequisicionSt.
+   - Controlador: ServicioTecnicoController (Index, Create, Store).
+   - Vistas: st/index.blade.php, st/create.blade.php, st/show.blade.php.
+   - Funcionalidad: Creación de tickets con cliente, equipo y fallas/repuestos.
+
+D) Nuevo Módulo: Productos
+   - Migración: Tabla 'productos'.
+   - Modelo: Producto.
+   - Controlador: ProductoController.
+   - Vistas: productos/index.blade.php.
 
 4. NOTAS DE DESPLIEGUE
 ----------------------
