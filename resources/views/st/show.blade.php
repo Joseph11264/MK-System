@@ -8,8 +8,8 @@
     <div class="d-flex justify-content-between align-items-center mb-3">
         <h2 class="text-primary m-0">🔎 Detalle Ticket ST #{{ $ticket->nro_orden_st }}</h2>
         <div>
-            @if($ticket->status === 'Pendiente')
-        <a href="{{ route('st.edit', $ticket->id) }}" class="btn btn-warning fw-bold text-dark shadow-sm me-2">🛠️ Realizar Revisión (Añadir Repuestos)</a>
+            @if($ticket->status === 'Pendiente' && auth()->user()->rol !== 'Almacen')
+                <a href="{{ route('st.edit', $ticket->id) }}" class="btn btn-warning fw-bold text-dark shadow-sm me-2">🛠️ Realizar Revisión (Añadir Repuestos)</a>
             @endif
             <a href="{{ route('st.index') }}" class="btn btn-outline-danger fw-bold">Volver al listado</a>
         </div>
@@ -18,11 +18,11 @@
 
    @if($ticket->status === 'Completado')
     <div class="card mb-4 border-{{ $ticket->estado_pago === 'Pagado' ? 'success' : 'warning' }} shadow-sm">
-        <div class="card-header bg-{{ $ticket->estado_pago === 'Pagado' ? 'success' : 'warning' }} text-{{ $ticket->estado_pago === 'Pagado' ? 'white' : 'dark' }} fw-bold d-flex justify-content-between align-items-center">
+        <div class="card-header bg-{{ $ticket->estado_pago === 'Pagado' ? 'success' : 'warning' }} text-{{ $ticket->estado_pago === 'Pagado' ? 'white' : 'body' }} fw-bold d-flex justify-content-between align-items-center">
             <span>💰 Estado de Facturación y Cobro</span>
             <span class="badge bg-light text-dark fs-6">{{ $ticket->estado_pago }}</span>
         </div>
-        <div class="card-body bg-light d-flex justify-content-between align-items-center">
+        <div class="card-body bg-body-secondary d-flex justify-content-between align-items-center">
             <div>
                 <p class="mb-1 fs-5"><strong>Monto a Cobrar:</strong> <span class="text-success">${{ number_format($ticket->precio_reparacion, 2) }}</span></p>
                 @if($ticket->estado_pago === 'Pagado')
@@ -67,10 +67,10 @@
         @if(in_array(auth()->user()->rol, ['SuperAdmin', 'Administracion', 'Almacen']))
         <div class="col-md-5 mb-3 mb-md-0">
             <div class="card border-warning shadow-sm h-100">
-                <div class="card-header bg-warning text-dark fw-bold">
+                <div class="card-header bg-warning text-body fw-bold">
                     📦 Despacho de Materiales (Almacén)
                 </div>
-                <div class="card-body bg-light">
+                <div class="card-body bg-body-secondary">
                     <form action="{{ route('st.update', $ticket->id) }}" method="POST">
                         @csrf @method('PUT')
                         <input type="hidden" name="guardar_materiales" value="1">
@@ -96,10 +96,10 @@
         @if(in_array(auth()->user()->rol, ['SuperAdmin', 'Administracion', 'ServicioTecnico']))
         <div class="col-md-7">
             <div class="card border-info shadow-sm h-100">
-                <div class="card-header bg-info text-dark fw-bold">
+                <div class="card-header bg-info text-body fw-bold">
                     📝 Diagnóstico y Precio (Técnico)
                 </div>
-                <div class="card-body bg-light">
+                <div class="card-body bg-body-secondary">
                     <form action="{{ route('st.update', $ticket->id) }}" method="POST">
                         @csrf @method('PUT')
                         <input type="hidden" name="guardar_diagnostico" value="1">
@@ -112,7 +112,7 @@
                         <div class="mb-3">
                             <label class="fw-bold mb-1">Precio de Reparación ($):</label>
                             @if($ticket->tipo_st === 'Garantia')
-                                <input type="text" class="form-control fw-bold text-success bg-light" value="0.00 (Cubierto por Garantía)" disabled>
+                                <input type="text" class="form-control fw-bold text-success bg-body-secondary" value="0.00 (Cubierto por Garantía)" disabled>
                                 <input type="hidden" name="precio_reparacion" value="0">
                             @else
                                 <input type="number" step="0.01" min="0" name="precio_reparacion" class="form-control fw-bold text-success border-success" value="{{ $ticket->precio_reparacion }}" placeholder="Ej: 45.50" required>
@@ -129,10 +129,10 @@
     </div>
     @endif
 
-    <div class="card shadow-sm mb-4 border-start border-5 border-danger bg-light">
+    <div class="card shadow-sm mb-4 border-start border-5 border-danger bg-body-secondary">
         <div class="card-body py-2">
             <h5 class="text-danger fw-bold mb-1">Falla Reportada por el Cliente al recibir:</h5>
-            <p class="mb-0 fs-5 text-dark"><i>"{{ $ticket->falla_reportada ?? 'No se registraron observaciones iniciales.' }}"</i></p>
+            <p class="mb-0 fs-5 text-body"><i>"{{ $ticket->falla_reportada ?? 'No se registraron observaciones iniciales.' }}"</i></p>
         </div>
     </div>
 
@@ -143,13 +143,13 @@
                 
                 @if(in_array(auth()->user()->rol, ['SuperAdmin', 'Administracion']) && $ticket->status !== 'Completado')
                 <div class="card mb-4 border-warning shadow-sm">
-                    <div class="card-body bg-light py-2 d-flex justify-content-between align-items-center">
-                        <span class="fw-bold text-dark"><i class="text-warning">⚠️</i> Reasignación de Técnico</span>
+                    <div class="card-body bg-body-secondary py-2 d-flex justify-content-between align-items-center">
+                        <span class="fw-bold text-body"><i class="text-warning">⚠️</i> Reasignación de Técnico</span>
                         
                         <form action="{{ route('st.update', $ticket->id) }}" method="POST" class="d-flex align-items-center gap-2 m-0">
                             @csrf @method('PUT')
                             <input type="hidden" name="reasignar_tecnico" value="1">
-                            <select name="tecnico_asignado_id" class="form-select form-select-sm border-warning fw-bold text-dark" style="min-width: 200px;">
+                            <select name="tecnico_asignado_id" class="form-select form-select-sm border-warning fw-bold text-body" style="min-width: 200px;">
                                 <option value="">-- Sin asignar --</option>
                                 @foreach($tecnicos as $tec)
                                     <option value="{{ $tec->id }}" {{ $ticket->tecnico_asignado_id == $tec->id ? 'selected' : '' }}>
@@ -157,7 +157,7 @@
                                     </option>
                                 @endforeach
                             </select>
-                            <button type="submit" class="btn btn-warning btn-sm fw-bold text-dark">Cambiar</button>
+                            <button type="submit" class="btn btn-warning btn-sm fw-bold text-body">Cambiar</button>
                         </form>
                     </div>
                 </div>
@@ -192,9 +192,9 @@
     
     <h3 class="h5 text-primary mb-3">🛠️ Fallas y Repuestos Asignados por el Técnico</h3>
     
-    <div class="table-responsive bg-white shadow-sm rounded border mb-4">
+    <div class="table-responsive bg-body shadow-sm rounded border mb-4">
         <table class="table table-bordered mb-0 align-middle">
-            <thead class="table-light">
+            <thead class="table-secondary">
                 <tr>
                     <th class="text-center" style="width: 5%;">#</th>
                     <th style="width: 15%;">Código</th>

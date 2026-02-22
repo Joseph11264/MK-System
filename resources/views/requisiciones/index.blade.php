@@ -19,10 +19,10 @@
     </section>
 
     <div class="card mb-4 shadow-sm border-0">
-        <div class="card-header bg-white text-primary fw-bold border-bottom-0 pt-3 pb-0">
+        <div class="card-header bg-body text-primary fw-bold border-bottom-0 pt-3 pb-0">
             Filtros Personalizados
         </div>
-        <div class="card-body bg-light rounded">
+        <div class="card-body bg-body-secondary rounded">
             <form action="{{ route('requisiciones.index') }}" method="GET">
                 <div class="row g-2 align-items-end">
                     <div class="col-md-2">
@@ -87,7 +87,7 @@
 
     <h3 class="text-primary h5 mb-3">Resultados (Total: {{ $requisiciones->total() }})</h3>
     
-    <div class="table-responsive bg-white shadow-sm rounded border-0">
+    <div class="table-responsive bg-body shadow-sm rounded border-0">
         <table class="table table-bordered table-hover text-center mb-0 align-middle">
             <thead class="table-primary text-white">
                 <tr>
@@ -127,13 +127,23 @@
                             </span>
                         </td>
                         <td>
-                            @if(in_array($req->status, ['Pendiente', 'En Curso']))
+                            @php
+                                $puedeAvanzar = false;
+                                if (auth()->user()->rol !== 'Produccion') {
+                                    if ($req->status === 'Pendiente') {
+                                        $puedeAvanzar = true; // Todos (menos Prod) pueden avanzar de Pendiente a En Curso
+                                    } elseif ($req->status === 'En Curso' && auth()->user()->rol !== 'Almacen') {
+                                        $puedeAvanzar = true; // Almacén NO puede avanzar si ya está En Curso
+                                    }
+                                }
+                            @endphp
+
+                            @if($puedeAvanzar)
                                 @php
                                     $nextStatus = $req->status === 'Pendiente' ? 'En Curso' : 'Entregado';
                                 @endphp
-                                <form action="{{ route('requisiciones.avanzar', $req->id) }}" method="POST" class="m-0 p-0 mb-1" onsubmit="return confirm('¿Seguro que deseas avanzar esta requisición a {{ $nextStatus }}?');">
-                                    @csrf
-                                    @method('PATCH')
+                                <form action="{{ route('requisiciones.avanzar', $req->id) }}" method="POST" class="m-0 p-0 mb-1" onsubmit="return confirm('¿Avanzar requisición a {{ $nextStatus }}?');">
+                                    @csrf @method('PATCH')
                                     <input type="hidden" name="new_status" value="{{ $nextStatus }}">
                                     <button type="submit" class="btn btn-link text-success text-decoration-none fw-bold p-0" style="font-size: 0.9em; box-shadow: none;">
                                         📝 Avanzar

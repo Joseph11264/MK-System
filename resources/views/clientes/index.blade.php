@@ -8,7 +8,7 @@
     </div>
 
     <div class="card mb-4 shadow-sm border-0">
-        <div class="card-body bg-light rounded">
+        <div class="card-body bg-body-secondary rounded">
             <form action="{{ route('clientes.index') }}" method="GET" class="d-flex gap-2">
                 <input type="text" name="buscar" class="form-control" placeholder="Buscar por nombre, teléfono o correo..." value="{{ request('buscar') }}">
                 <button type="submit" class="btn btn-primary fw-bold px-4">🔍 Buscar</button>

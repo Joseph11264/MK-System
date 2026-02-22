@@ -4,14 +4,15 @@
 
 @section('content')
 <section class="main-content-wrapper">
-
+    @if(!in_array(auth()->user()->rol, ['Almacen', 'Produccion']))
     <div class="d-flex justify-content-between align-items-center mb-3">
         <h2 class="text-primary m-0">🔧 Consulta de Tickets (Servicio Técnico)</h2>
         <a href="{{ route('st.create') }}" class="btn btn-primary fw-bold">➕ Nuevo Ticket</a>
     </div>
+    @endif
 
     <div class="card mb-4 shadow-sm border-0">
-        <div class="card-body bg-light rounded">
+        <div class="card-body bg-body-secondary rounded">
             <form action="{{ route('st.index') }}" method="GET">
                 <div class="row g-2 align-items-end">
                     <div class="col-md-1">
@@ -79,7 +80,7 @@
     
     <hr>
     
-    <div class="table-responsive bg-white shadow-sm rounded">
+    <div class="table-responsive bg-body shadow-sm rounded">
         <table class="table table-bordered table-hover text-center mb-0 align-middle">
             <thead class="table-dark text-white">
                 <tr>
@@ -144,7 +145,7 @@
                         @endif
 
                         <a href="{{ route('st.show', $ticket->id) }}" class="text-primary text-decoration-none d-block fw-bold mb-1" style="font-size: 0.9em;">🔎 Ver</a>
-                        @if($ticket->status === 'Pendiente')
+                        @if($ticket->status === 'Pendiente' && !in_array(auth()->user()->rol, ['Almacen', 'Produccion']))
                             <a href="{{ route('st.edit', $ticket->id) }}" class="text-danger text-decoration-none d-block mt-1" style="font-size: 0.9em;">✏️ Editar</a>
                         @endif
                     </td>

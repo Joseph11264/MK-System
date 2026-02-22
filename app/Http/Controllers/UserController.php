@@ -23,13 +23,19 @@ class UserController
             'password' => ['required', 'string'],
         ]);
 
-        // Auth::attempt verifica si el usuario existe y si el hash de la contraseña coincide
+        // Auth::attempt verifica si el usuario existe y si el hash coincide
         if (Auth::attempt($credentials)) {
-            $request->session()->regenerate(); // Evita ataques de fijación de sesión
+            // SI ENTRA CON ÉXITO: Borramos el contador de errores
+            $request->session()->forget('login_attempts');
+            $request->session()->regenerate(); 
             return redirect()->intended('/requisiciones'); 
         }
 
-        // Si falla, lo devuelve al login con un mensaje de error que Bootstrap mostrará
+        // SI FALLA: Sumamos 1 al contador de intentos fallidos
+        $intentos = $request->session()->get('login_attempts', 0) + 1;
+        $request->session()->put('login_attempts', $intentos);
+
+        // Si falla, lo devuelve al login con un mensaje de error
         return back()->withErrors([
             'username' => 'Las credenciales proporcionadas no coinciden con nuestros registros.',
         ])->onlyInput('username');

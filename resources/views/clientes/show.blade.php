@@ -7,7 +7,7 @@
         <a href="{{ route('clientes.index') }}" class="btn btn-outline-secondary fw-bold">Volver al Directorio</a>
     </div>
 
-    <div class="card shadow-sm border-0 mb-4 border-start border-5 border-primary bg-white">
+    <div class="card shadow-sm border-0 mb-4 border-start border-5 border-primary bg-body">
         <div class="card-body">
             <h3 class="mb-1 text-primary">{{ $cliente->nombre }}</h3>
             <p class="mb-0 fs-5"><strong>📞 Teléfono:</strong> {{ $cliente->telefono ?: 'N/A' }} <span class="mx-2">|</span> <strong>📧 Correo:</strong> {{ $cliente->correo ?: 'N/A' }}</p>
@@ -19,7 +19,7 @@
     <div class="card shadow-sm border-0">
         <div class="table-responsive">
             <table class="table table-hover align-middle mb-0 text-center">
-                <thead class="table-light">
+                <thead class="table-secondary">
                     <tr>
                         <th>Nro. Orden</th>
                         <th>Fecha de Ingreso</th>

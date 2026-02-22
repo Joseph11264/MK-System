@@ -11,7 +11,7 @@
     <div class="row">
         <div class="col-md-4 mb-4">
             <div class="card shadow-sm border-0 border-top border-4 border-success">
-                <div class="card-header bg-white text-dark fw-bold fs-5">
+                <div class="card-header bg-body text-body fw-bold fs-5">
                     ➕ Nueva Familia
                 </div>
                 <div class="card-body">

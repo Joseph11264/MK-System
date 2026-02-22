@@ -21,11 +21,11 @@
         </div>
     @endif
 
-    <form action="{{ route('requisiciones.store') }}" method="POST" id="formRequisicion" class="bg-white p-4 rounded shadow-sm border">
+    <form action="{{ route('requisiciones.store') }}" method="POST" id="formRequisicion" class="bg-body p-4 rounded shadow-sm border">
         @csrf <fieldset class="border p-3 rounded mb-4">
             <legend class="float-none w-auto px-2 fw-bold text-primary fs-5">Información del Técnico</legend>
 
-            <div class="mb-4 p-3 bg-light rounded border">
+            <div class="mb-4 p-3 bg-body-secondary rounded border">
                 <label class="fw-bold me-3">Tipo de Operación (*):</label>
                 <div class="form-check form-check-inline">
                     <input class="form-check-input" type="radio" name="tipo" id="tipoReq" value="Requisicion" checked>
@@ -54,7 +54,7 @@
             
             <div class="table-responsive">
                 <table class="table table-bordered align-middle" id="productosTable">
-                    <thead class="table-light">
+                    <thead class="table-secondary">
                         <tr>
                             <th style="width: 25%;">Código de Producto (*)</th>
                             <th style="width: 15%;">Cantidad (*)</th>

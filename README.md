@@ -1,59 +1,80 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# SISTEMA MK
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+**Documentación y Registro de Cambios**
 
-## About Laravel
+## 1. DESCRIPCIÓN DEL PROYECTO
+Sistema administrativo web desarrollado en Laravel para la gestión de almacén.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+**Principales módulos:**
+- **Requisiciones:** Creación, consulta y cambio de estatus (Pendiente, En Curso, Completado).
+- **Usuarios:** Gestión de acceso y roles (CRUD).
+- **Servicio Técnico:** Gestión de tickets de reparación, asignación de técnicos y repuestos.
+- **Productos:** Catálogo base de productos/repuestos para usar en los tickets.
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## 2. ESTRUCTURA DE CÓDIGO RELEVANTE
+- **Controladores:** `app/Http/Controllers/` (Lógica de negocio: RequisicionController, UserController, ServicioTecnicoController, ClienteController).
+- **Modelos:** `app/Models/` (Interacción con BD: Requisicion, DetalleRequisicion, User).
+- **Vistas:** `resources/views/` (Interfaz gráfica con Blade y Bootstrap).
+- **Rutas:** `routes/web.php` (Definición de URLs y protección por middleware).
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## 3. REGISTRO DE CAMBIOS (CHANGELOG) - ÚLTIMA VERSIÓN
+**Fecha:** 21/02/2026  
+**Autor:** Joseph11264 / Asistente
 
-## Learning Laravel
+### Cambios Realizados:
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+#### A) Refactorización de Roles de Usuario (UserController.php)
+- Se reemplazó el rol "SuperUsuario" por "SuperAdmin" para mantener consistencia.
+- Se actualizó la validación en los métodos `store()` y `update()` para aceptar 'SuperAdmin'.
+- Se renombró la función de seguridad interna a `authorizeSuperAdmin`.
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+#### B) Documentación
+- Creación de este archivo de documentación en la raíz del proyecto.
 
-## Laravel Sponsors
+#### C) Nuevo Módulo: Servicio Técnico (ST)
+- **Migraciones:** Tablas `requisicion_st` y `detalles_requisiciones_st`.
+- **Modelos:** `RequisicionSt`, `DetalleRequisicionSt`.
+- **Controlador:** `ServicioTecnicoController` (Index, Create, Store).
+- **Vistas:** `st/index.blade.php`, `st/create.blade.php`, `st/show.blade.php`.
+- **Funcionalidad:** Creación de tickets con cliente, equipo y fallas/repuestos.
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+#### D) Nuevo Módulo: Productos
+- **Migración:** Tabla `productos`.
+- **Modelo:** `Producto`.
+- **Controlador:** `ProductoController`.
+- **Vistas:** `productos/index.blade.php`.
 
-### Premium Partners
+#### E) Reportes y Mantenimiento (22/02/2026)
+- Implementación de generación de PDF (DomPDF) para Requisiciones y Tickets ST.
+- Actualización de `.gitignore` para excluir caché de fuentes y archivos temporales.
+- Nuevas rutas y vistas para reportes (`requisiciones.reporte`, `st.reporte`).
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+#### F) Refinamiento de Lógica de Negocio (22/02/2026 - Parte 2)
+- **Servicio Técnico:**
+    * Implementación de Tipos: Reparación vs Garantía.
+    * Flujo de Cierre: Validación obligatoria de entrega de materiales y precio antes de completar.
+    * Gestión de Pagos: Registro de referencia de pago y cambio de estado a 'Pagado'.
+- **Requisiciones:**
+    * Diferenciación entre 'Requisición' (Salida) y 'Devolución' (Entrada).
 
-## Contributing
+#### G) Panel de Control y Notificaciones (22/02/2026 - Parte 3)
+- **Dashboard:**
+    * Nuevo `DashboardController` y vista principal con KPIs (Tarjetas de resumen).
+    * Integración de gráficas estadísticas (Chart.js) para monitorear tickets y requisiciones.
+- **Correos:**
+    * Clase `TicketCompletadoMail` para envío automático de reportes PDF al finalizar un servicio.
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+#### H) Módulo de Clientes (22/02/2026 - Parte 4)
+- **Controlador:** `ClienteController`.
+- **Funcionalidad:** 
+    * Directorio de clientes con búsqueda inteligente.
+    * Historial de reparaciones y equipos por cliente.
+    * API interna para autocompletado en formularios de ST.
 
-## Code of Conduct
+#### I) Gestión de Familias (Categorización)
+- **Controlador:** `FamiliaController`.
+- **Funcionalidad:** Organización de productos en familias con rangos de códigos.
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
-
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
-
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+## 4. NOTAS DE DESPLIEGUE
+- Asegurarse de ejecutar las migraciones si hay cambios en la BD.
+- Verificar que los usuarios en la base de datos tengan el rol 'SuperAdmin' textualmente.

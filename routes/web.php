@@ -27,6 +27,9 @@ Route::get('/login', [UserController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [UserController::class, 'authenticate']);
 Route::post('/logout', [UserController::class, 'logout'])->name('logout');
 
+Route::get('/recuperar-acceso', [App\Http\Controllers\RecuperacionController::class, 'create'])->name('recuperacion.create');
+Route::post('/recuperar-acceso', [App\Http\Controllers\RecuperacionController::class, 'store'])->name('recuperacion.store');
+
 /*
 |--------------------------------------------------------------------------
 | Rutas Protegidas (Requieren inicio de sesión)

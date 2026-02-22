@@ -21,7 +21,7 @@
         </div>
     @endif
 
-    <form action="{{ route('st.store') }}" method="POST" id="formST" class="bg-white p-4 rounded shadow-sm border">
+    <form action="{{ route('st.store') }}" method="POST" id="formST" class="bg-body p-4 rounded shadow-sm border">
         @csrf
 
         <fieldset class="border p-3 rounded mb-4">
@@ -34,7 +34,7 @@
 
                 <div class="col-md-4 mb-3">
                     <label class="form-label fw-bold">Tipo de Servicio </label>
-                    <div class="p-2 border rounded bg-light">
+                    <div class="p-2 border rounded bg-body-secondary">
                         <div class="form-check form-check-inline">
                             <input class="form-check-input" type="radio" name="tipo_st" id="tipoRep" value="Reparacion" checked>
                             <label class="form-check-label text-primary fw-bold" for="tipoRep"> Reparación</label>

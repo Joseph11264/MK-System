@@ -20,7 +20,7 @@
         </div>
     @endif
 
-    <form action="{{ route('st.update', $ticket->id) }}" method="POST" class="bg-white p-4 rounded shadow-sm border" id="formST">
+    <form action="{{ route('st.update', $ticket->id) }}" method="POST" class="bg-body p-4 rounded shadow-sm border" id="formST">
         @csrf @method('PUT')
         <input type="hidden" name="actualizar_ticket" value="1">
 
@@ -64,8 +64,17 @@
                     <label class="form-label fw-bold text-primary">Estado de Revisión</label>
                     <select class="form-select border-primary fw-bold" name="status" required>
                         <option value="Pendiente" {{ $ticket->status == 'Pendiente' ? 'selected' : '' }}>🔴 Pendiente (Revisando/Reparando)</option>
+                        
+                        @if(in_array(auth()->user()->rol, ['SuperAdmin', 'Administracion']))
+                            <option value="Completado" {{ $ticket->status == 'Completado' ? 'selected' : '' }}>✅ Completado (Listo para entregar)</option>
+                        @endif
+                        
                         <option value="Cancelado" {{ $ticket->status == 'Cancelado' ? 'selected' : '' }}>🚫 Cancelado (Sin solución)</option>
                     </select>
+                    
+                    @if(!in_array(auth()->user()->rol, ['SuperAdmin', 'Administracion']))
+                        <small class="text-muted d-block mt-1">Solo Administración puede marcar el ticket como Completado.</small>
+                    @endif
                 </div>
 
                 <div class="col-md-12 mb-3">
@@ -75,13 +84,13 @@
             </div>
         </fieldset>
             
-        <fieldset class="border p-3 rounded mb-4 bg-light">
+        <fieldset class="border p-3 rounded mb-4 bg-body-secondary">
             <legend class="float-none w-auto px-2 fw-bold text-primary fs-5">🛠️ Repuestos Necesarios</legend>
             <p class="text-muted small mb-2">Añade aquí los repuestos o componentes que utilizarás. Si solo es revisión sin repuestos, puedes dejar esto vacío.</p>
             
             <div class="table-responsive">
-                <table class="table table-bordered align-middle bg-white">
-                    <thead class="table-light">
+                <table class="table table-bordered align-middle bg-body">
+                    <thead class="table-secondary">
                         <tr>
                             <th style="width: 25%;">Código de Producto</th>
                             <th style="width: 15%;">Cantidad</th>

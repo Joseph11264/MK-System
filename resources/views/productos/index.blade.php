@@ -6,11 +6,13 @@
 <section class="main-content-wrapper">
     <div class="d-flex justify-content-between align-items-center mb-3">
         <h2 class="text-primary m-0">📦 Catálogo de Productos</h2>
-        <a href="{{ route('productos.create') }}" class="btn btn-success fw-bold shadow-sm">➕ Nuevo Producto</a>
+        @if(!in_array(auth()->user()->rol, ['Produccion', 'Almacen', 'ServicioTecnico']))
+            <a href="{{ route('productos.create') }}" class="btn btn-success fw-bold shadow-sm">➕ Nuevo Producto</a>
+        @endif
     </div>
 
     <div class="card mb-4 shadow-sm border-0">
-        <div class="card-body bg-light rounded">
+        <div class="card-body bg-body-secondary rounded">
             <form action="{{ route('productos.index') }}" method="GET" class="row g-3 align-items-end">
                 <div class="col-md-3">
                     <label class="form-label fw-bold">Buscar por Código</label>
@@ -71,11 +73,14 @@
                         <td class="text-center">
                             <div class="d-flex justify-content-center gap-2">
                                 <a href="{{ route('productos.show', $producto->id) }}" class="btn btn-sm btn-outline-primary" title="Ver Historial">🔎</a>
-                                <a href="{{ route('productos.edit', $producto->id) }}" class="btn btn-sm btn-outline-warning" title="Editar">✏️</a>
-                                <form action="{{ route('productos.destroy', $producto->id) }}" method="POST" onsubmit="return confirm('¿Seguro que deseas eliminar este producto?');" class="m-0">
-                                    @csrf @method('DELETE')
-                                    <button type="submit" class="btn btn-sm btn-outline-danger" title="Eliminar">🗑️</button>
-                                </form>
+                                
+                                @if(!in_array(auth()->user()->rol, ['Produccion', 'Almacen', 'ServicioTecnico']))
+                                    <a href="{{ route('productos.edit', $producto->id) }}" class="btn btn-sm btn-outline-warning" title="Editar">✏️</a>
+                                    <form action="{{ route('productos.destroy', $producto->id) }}" method="POST" onsubmit="return confirm('¿Seguro que deseas eliminar este producto?');" class="m-0">
+                                        @csrf @method('DELETE')
+                                        <button type="submit" class="btn btn-sm btn-outline-danger" title="Eliminar">🗑️</button>
+                                    </form>
+                                @endif
                             </div>
                         </td>
                     </tr>

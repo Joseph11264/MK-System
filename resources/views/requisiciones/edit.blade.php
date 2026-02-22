@@ -19,7 +19,7 @@
         </div>
     @endif
 
-    <form action="{{ route('requisiciones.update', $requisicion->id) }}" method="POST" class="bg-white p-4 rounded shadow-sm border" id="formRequisicion">
+    <form action="{{ route('requisiciones.update', $requisicion->id) }}" method="POST" class="bg-body p-4 rounded shadow-sm border" id="formRequisicion">
         @csrf @method('PUT')
 
         @if($requisicion->status === 'En Curso')
@@ -38,7 +38,7 @@
             <fieldset class="border p-3 rounded mb-4">
                 <legend class="float-none w-auto px-2 fw-bold text-primary fs-5">Información Principal</legend>
                 
-                <div class="mb-3 p-3 bg-light rounded border">
+                <div class="mb-3 p-3 bg-body-secondary rounded border">
                     <label class="fw-bold me-3">Tipo de Operación:</label>
                     <div class="form-check form-check-inline">
                         <input class="form-check-input" type="radio" name="tipo" id="tipoReq" value="Requisicion" {{ $requisicion->tipo == 'Requisicion' ? 'checked' : '' }}>
@@ -74,7 +74,7 @@
                 <legend class="float-none w-auto px-2 fw-bold text-primary fs-5">Modificar Productos</legend>
                 <div class="table-responsive">
                     <table class="table table-bordered align-middle">
-                        <thead class="table-light">
+                        <thead class="table-secondary">
                             <tr>
                                 <th style="width: 25%;">Código</th>
                                 <th style="width: 15%;">Cantidad</th>

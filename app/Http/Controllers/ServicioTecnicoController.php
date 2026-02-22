@@ -56,6 +56,9 @@ class ServicioTecnicoController
 
     public function create()
     {
+        if (auth()->user()->rol === ['Almacen', 'Produccion']) {
+            abort(403, 'Almacén solo puede despachar materiales desde la lupa (Ver Detalle).');
+        }
         // Calculamos el próximo número exacto para mostrarlo en la vista
         $ultimoTicket = RequisicionSt::orderBy('id', 'desc')->first();
         
@@ -73,6 +76,11 @@ class ServicioTecnicoController
 
     public function store(Request $request)
     {
+
+        if (auth()->user()->rol === ['Almacen', 'Produccion']) {
+            abort(403, 'Almacén solo puede despachar materiales desde la lupa (Ver Detalle).');
+        }
+
         $ultimoTicket = RequisicionSt::orderBy('id', 'desc')->first();
         $nuevoNroOrden = ($ultimoTicket && is_numeric($ultimoTicket->nro_orden_st)) ? $ultimoTicket->nro_orden_st + 1 : 12600;
 
@@ -127,6 +135,10 @@ class ServicioTecnicoController
 
     public function edit($id)
     {
+        if (auth()->user()->rol === ['Almacen', 'Produccion']) {
+            abort(403, 'Acceso denegado. Producción y Almacén solo pueden consultar el catálogo.');
+        }
+
         $ticket = RequisicionSt::with('detalles.productoCatalogo')->findOrFail($id);
 
         if (in_array($ticket->status, ['Completado', 'Cancelado'])) {
@@ -139,6 +151,11 @@ class ServicioTecnicoController
 
     public function update(Request $request, $id)
     {
+
+        if (auth()->user()->rol === 'Produccion') {
+            abort(403, 'Acceso denegado. Producción y Almacén solo pueden consultar el catálogo.');
+        }
+        
         $ticket = RequisicionSt::findOrFail($id);
 
         // 1. FLUJO: Reasignar Técnico Rápido
@@ -161,6 +178,7 @@ class ServicioTecnicoController
         // 3. FLUJO: Guardar Diagnóstico y Precio (SOLO TÉCNICOS)
         // ========================================================
         if ($request->has('guardar_diagnostico')) {
+            if (!in_array(auth()->user()->rol, ['SuperAdmin', 'Administracion', 'ServicioTecnico'])) abort(403);
             $request->validate(['diagnostico' => 'required|string']);
             $precio = $ticket->tipo_st === 'Garantia' ? 0 : $request->precio_reparacion;
             
@@ -175,6 +193,7 @@ class ServicioTecnicoController
         // 4. FLUJO: Despacho de Materiales (SOLO ALMACÉN)
         // ========================================================
         if ($request->has('guardar_materiales')) {
+            if (!in_array(auth()->user()->rol, ['SuperAdmin', 'Administracion', 'Almacen'])) abort(403);
             $ticket->update([
                 'materiales_entregados' => $request->materiales_entregados
             ]);
@@ -184,6 +203,9 @@ class ServicioTecnicoController
 
         // 5. FLUJO: Edición de Revisión y Repuestos (Desde el botón "Realizar Revisión")
         if ($request->has('actualizar_ticket')) {
+            if ($validated['status'] === 'Completado' && !in_array(auth()->user()->rol, ['SuperAdmin', 'Administracion'])) {
+                abort(403, 'Acceso denegado. Solo Administración puede marcar un ticket ST como Completado.');
+            }
             $validated = $request->validate([
                 'cliente' => 'required|string',
                 'codigo_equipo' => 'required|string', 
@@ -242,7 +264,11 @@ class ServicioTecnicoController
     }
     
         public function avanzarStatus(Request $request, $id)
-    {
+        {
+        if (!in_array(auth()->user()->rol, ['SuperAdmin', 'Administracion'])) {
+            abort(403, 'Acceso denegado. Solo Administración puede completar y cerrar los tickets.');
+        }
+
         $ticket = RequisicionSt::with('detalles.productoCatalogo')->findOrFail($id);
         
         if (!$ticket->materiales_entregados) {

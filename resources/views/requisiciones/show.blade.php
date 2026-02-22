@@ -11,7 +11,7 @@
     </div>
     <hr>
     
-    <div class="bg-light p-4 rounded mb-4 border-start border-5 border-primary shadow-sm">
+    <div class="bg-body-secondary p-4 rounded mb-4 border-start border-5 border-primary shadow-sm">
         <h3 class="h5 border-bottom pb-2 mb-3 text-secondary">Información General</h3>
         
         <div class="row">
@@ -47,9 +47,9 @@
     
     <h3 class="h5 text-primary mb-3">📦 Productos Solicitados</h3>
     
-    <div class="table-responsive bg-white shadow-sm rounded border">
+    <div class="table-responsive bg-body shadow-sm rounded border">
         <table class="table table-bordered table-striped mb-0 align-middle">
-            <thead class="table-light">
+            <thead class="table-secondary">
                 <tr>
                     <th class="text-center" style="width: 5%;">#</th>
                     <th style="width: 15%;">Código</th>
@@ -81,7 +81,7 @@
     <div class="mt-4 d-flex gap-2">
         @if(!in_array($requisicion->status, ['Completado', 'Cancelado']))
             <a href="{{ route('requisiciones.edit', $requisicion->id) }}" class="btn btn-success fw-bold">
-                📝 Modificar / Avanzar
+                📝 Modificar
             </a>
         @endif
         

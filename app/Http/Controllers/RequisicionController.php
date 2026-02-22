@@ -187,9 +187,17 @@ class RequisicionController
                          ->with('success', '¡Requisición creada con éxito!');
     }
 
-    // Reemplaza a tu función avanzarStatus()
     public function avanzarStatus(Requisicion $requisicion, Request $request)
     {
+
+        if (auth()->user()->rol === 'Produccion' || auth()->user()->rol === 'ServicioTecnico') {
+            abort(403, 'Acceso denegado. Solo Almacén o Administración pueden avanzar el estado de las requisiciones.');
+        }
+
+        if (auth()->user()->rol === 'Almacen' && $requisicion->status === 'En Curso') { 
+            abort(403, 'Acceso denegado. Solo Administración puede preparar (avanzar a En Curso).');
+        }
+        
         // Validación rápida del nuevo estado
         $request->validate(['new_status' => 'required|in:En Curso,Completado,Cancelado']);
 
@@ -199,8 +207,8 @@ class RequisicionController
         return back()->with('success', 'El estado de la requisición ha avanzado a: ' . $request->new_status);
     }
 
-        public function generarReporte($id)
-{
+    public function generarReporte($id)
+    {
     // Buscamos la requisición con sus detalles y productos
     $requisicion = Requisicion::with('detalles')->findOrFail($id);
 

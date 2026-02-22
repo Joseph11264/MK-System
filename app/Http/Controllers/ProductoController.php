@@ -30,12 +30,20 @@ class ProductoController
 
     public function create()
     {
+        if (in_array(auth()->user()->rol, ['Produccion', 'Almacen', 'ServicioTecnico'])) {
+            abort(403, 'Acceso denegado. Este rol solo puede consultar el catálogo.');
+        }
+
         $familias = \App\Models\Familia::orderBy('nombre', 'asc')->get();
         return view('productos.create', compact('familias'));
     }
 
     public function store(Request $request)
     {
+        if (in_array(auth()->user()->rol, ['Produccion', 'Almacen', 'ServicioTecnico'])) {
+            abort(403, 'Acceso denegado. Este rol solo puede consultar el catálogo.');
+        }
+
         $request->validate([
             'codigo_producto' => ['required', 'string', 'regex:/^\d{6}[A-Za-z]?$/', 'unique:productos,codigo_producto'],
             'descripcion' => 'required|string|max:255',
@@ -73,6 +81,10 @@ class ProductoController
 
     public function edit($id)
     {
+        if (in_array(auth()->user()->rol, ['Produccion', 'Almacen', 'ServicioTecnico'])) {
+            abort(403, 'Acceso denegado. Este rol solo puede consultar el catálogo.');
+        }
+
         // 1. Buscamos el producto y las familias
         $producto = Producto::findOrFail($id);
         $familias = \App\Models\Familia::orderBy('nombre', 'asc')->get();
@@ -83,6 +95,10 @@ class ProductoController
 
     public function update(Request $request, $id)
     {
+        if (in_array(auth()->user()->rol, ['Produccion', 'Almacen', 'ServicioTecnico'])) {
+            abort(403, 'Acceso denegado. Este rol solo puede consultar el catálogo.');
+        }
+
         $producto = Producto::findOrFail($id);
 
         // Validamos asegurándonos de que el código no se repita con OTRO producto,
@@ -120,6 +136,10 @@ class ProductoController
     // Método para eliminar
     public function destroy($id)
     {
+        if (in_array(auth()->user()->rol, ['Produccion', 'Almacen', 'ServicioTecnico'])) {
+            abort(403, 'Acceso denegado. Este rol solo puede consultar el catálogo.');
+        }
+        
         $producto = Producto::findOrFail($id);
         if ($producto->imagen) {
             Storage::disk('public')->delete($producto->imagen);

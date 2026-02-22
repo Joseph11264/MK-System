@@ -31,7 +31,7 @@
             <p>Adjunto a este correo electrónico encontrarás el reporte detallado en formato PDF con las piezas reemplazadas o las acciones tomadas.</p>
             
             <p style="margin-top: 30px;">Gracias por confiar en nosotros.</p>
-            <p><strong>Atentamente,<br>El equipo de SISTEMA MK</strong></p>
+            <p><strong>Atentamente,<br>El equipo de MKJOULES</strong></p>
         </div>
     </div>
 

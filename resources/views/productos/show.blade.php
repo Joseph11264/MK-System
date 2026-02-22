@@ -28,12 +28,12 @@
     <div class="row">
         <div class="col-md-6 mb-4">
             <div class="card shadow-sm border-0 h-100">
-                <div class="card-header bg-warning text-dark fw-bold">
+                <div class="card-header bg-warning text-body fw-bold">
                     🔧 Usado en Servicio Técnico
                 </div>
                 <div class="card-body p-0 table-responsive">
                     <table class="table table-hover mb-0">
-                        <thead class="table-light">
+                        <thead class="table-secondary">
                             <tr>
                                 <th>Orden ST</th>
                                 <th>Fecha</th>
@@ -69,7 +69,7 @@
                 </div>
                 <div class="card-body p-0 table-responsive">
                     <table class="table table-hover mb-0">
-                        <thead class="table-light">
+                        <thead class="table-secondary">
                             <tr>
                                 <th>Requisición</th>
                                 <th>Fecha</th>
