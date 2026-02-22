@@ -40,14 +40,19 @@
                     <a class="nav-link text-dark rounded" href="{{ route('requisiciones.index') }}">📄 Consultar</a>
                 </li>
 
+                @if(in_array(auth()->user()->rol, ['SuperAdmin', 'Administracion', 'ServicioTecnico', 'Almacen']))
                 <li class="nav-item mb-2">
                     <a class="nav-link text-dark rounded" href="{{ route('st.index') }}">🔧 Servicio Técnico</a>
                 </li>
+                @endif
+
+                @if(in_array(auth()->user()->rol, ['SuperAdmin', 'Administracion']))
                 <li class="nav-item mb-2">
-                    <a class="nav-link text-dark rounded" href="{{ route('st.create') }}">📦 Agregar Productos</a>
+                    <a class="nav-link text-dark rounded" href="{{ route('productos.index') }}">📦 Agregar Productos</a>
                 </li>
+                @endif
                 
-                @if(auth()->user() && auth()->user()->rol === 'SuperAdmin')
+                @if(auth()->user()->rol === 'SuperAdmin')
                     <hr>
                     <li class="nav-item mb-2">
                         <a class="nav-link text-dark rounded" href="{{ route('usuarios.index') }}">👤 Gestionar Usuarios</a>

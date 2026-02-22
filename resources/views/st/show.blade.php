@@ -76,7 +76,7 @@
             </form>
         @endif
         
-        <a href="#" class="btn btn-primary fw-bold">Imprimir Reporte 📄</a>
+        <a href="{{ route('st.reporte', $ticket->id) }}" class="btn btn-primary fw-bold">Imprimir Reporte 📄</a>
     </div>
 
 </section>

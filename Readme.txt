@@ -45,6 +45,11 @@ D) Nuevo Módulo: Productos
    - Controlador: ProductoController.
    - Vistas: productos/index.blade.php.
 
+E) Reportes y Mantenimiento (22/02/2026)
+   - Implementación de generación de PDF (DomPDF) para Requisiciones y Tickets ST.
+   - Actualización de .gitignore para excluir caché de fuentes y archivos temporales.
+   - Nuevas rutas y vistas para reportes (requisiciones.reporte, st.reporte).
+
 4. NOTAS DE DESPLIEGUE
 ----------------------
 - Asegurarse de ejecutar las migraciones si hay cambios en la BD.

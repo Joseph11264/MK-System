@@ -25,6 +25,15 @@
         </div>
 
         <div class="form-group-filter">
+            <label class="fw-bold form-label mb-1">Tipo:</label>
+            <select name="tipo" class="form-select form-select-sm" style="width: 120px;">
+                <option value=""> Todos </option>
+                <option value="Requisicion" {{ request('tipo') == 'Requisicion' ? 'selected' : '' }}>Requisición</option>
+                <option value="Devolucion" {{ request('tipo') == 'Devolucion' ? 'selected' : '' }}>Devolución</option>
+            </select>
+        </div>
+
+        <div class="form-group-filter">
             <label class="fw-bold form-label mb-1">Nro Técnico:</label>
             <input type="text" name="nro_tecnico" class="form-control form-control-sm" value="{{ request('nro_tecnico') }}" style="width: 120px;">
         </div>
@@ -60,6 +69,7 @@
             <thead class="table-primary text-white">
                 <tr>
                     <th>ID</th>
+                    <th>Tipo</th>
                     <th>Nro Técnico</th>
                     <th>Técnico</th>
                     <th>Cód. Producto</th>
@@ -72,11 +82,17 @@
             <tbody>
                 @forelse($requisiciones as $req)
                     @php
-                        // Reutilizamos tus clases CSS exactas para los colores
                         $statusClass = 'status-' . strtolower(str_replace(' ', '-', $req->status));
                     @endphp
                     <tr class="{{ $statusClass }}">
                         <td class="fw-bold">{{ $req->id }}</td>
+                        <td class="fw-bold">
+                        @if($req->tipo === 'Devolucion')
+                            <span class="badge bg-warning text-dark" style="font-size: 0.75em;">Devolución</span>
+                        @else
+                            <span class="badge bg-primary" style="font-size: 0.75em;">Requisición</span>
+                        @endif
+                        </td>
                         <td>{{ $req->nro_tecnico }}</td>
                         <td>{{ $req->nombre_tecnico }}</td>
                         <td>{{ $req->detalles->pluck('codigo_producto')->join(', ') }}</td>
@@ -85,12 +101,27 @@
                         <td><span class="badge bg-secondary">{{ $req->status }}</span></td>
                         <td>
                             @if(in_array($req->status, ['Pendiente', 'En Curso']))
-                                <a href="#" class="text-success text-decoration-none fw-bold d-block mb-1">📝 Avanzar</a>
+                                @php
+                                    $nextStatus = $req->status === 'Pendiente' ? 'En Curso' : 'Completado';
+                                @endphp
+                                <form action="{{ route('requisiciones.avanzar', $req->id) }}" method="POST" class="m-0 p-0 mb-1" onsubmit="return confirm('¿Seguro que deseas avanzar esta requisición a {{ $nextStatus }}?');">
+                                    @csrf
+                                    @method('PATCH')
+                                    <input type="hidden" name="new_status" value="{{ $nextStatus }}">
+                                    <button type="submit" class="btn btn-link text-success text-decoration-none fw-bold p-0" style="font-size: 0.9em; box-shadow: none;">
+                                        📝 Avanzar
+                                    </button>
+                                </form>
                             @endif
-                            <a href="#" class="text-primary text-decoration-none d-block" style="font-size: 0.9em;">🔎 Ver Detalle</a>
+
+                            <a href="{{ route('requisiciones.show', $req->id) }}" class="text-primary text-decoration-none d-block" style="font-size: 0.9em;">
+                                🔎 Ver Detalle
+                            </a>
                             
                             @if($req->status === 'Pendiente')
-                                <a href="#" class="text-danger text-decoration-none fw-bold d-block mt-1" style="font-size: 0.9em;">✏️ Modificar</a>
+                                <a href="{{ route('requisiciones.edit', $req->id) }}" class="text-danger text-decoration-none fw-bold d-block mt-1" style="font-size: 0.9em;">
+                                    ✏️ Modificar
+                                </a>
                             @endif
                         </td>
                     </tr>

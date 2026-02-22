@@ -10,6 +10,7 @@ class Requisicion extends Model
     protected $table = 'requisiciones'; 
 
     protected $fillable = [
+        'tipo',
         'nro_tecnico',
         'nombre_tecnico',
         'status',

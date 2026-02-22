@@ -101,4 +101,14 @@ class UserController
     {
         abort_unless(Auth::check() && Auth::user()->rol === 'SuperAdmin', 403, 'Acceso denegado.');
     }
+
+    public function create()
+    {
+        return view('usuarios.create');
+    }
+
+    public function edit(User $usuario)
+    {
+        return view('usuarios.edit', compact('usuario'));
+    }
 }

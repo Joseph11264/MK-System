@@ -50,9 +50,9 @@
                         <td>{{ $ticket->created_at->format('Y-m-d') }}</td>
                         <td><span class="badge border border-dark text-dark fs-6">{{ $ticket->status }}</span></td>
                         <td>
-                            <a href="show.php" class="text-primary text-decoration-none d-block fw-bold mb-1">🔎 Ver</a>
+                            <a href="{{ route('st.show', $ticket->id) }}" class="text-primary text-decoration-none d-block fw-bold mb-1">🔎 Ver</a>
                             @if($ticket->status === 'Pendiente')
-                                <a href="#" class="text-danger text-decoration-none d-block mt-1" style="font-size: 0.9em;">✏️ Editar</a>
+                                <a href="{{ route('st.edit', $ticket->id) }}" class="text-danger text-decoration-none d-block mt-1" style="font-size: 0.9em;">✏️ Editar</a>
                             @endif
                         </td>
                     </tr>

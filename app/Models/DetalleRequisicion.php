@@ -23,4 +23,9 @@ class DetalleRequisicion extends Model
     {
         return $this->belongsTo(Requisicion::class, 'requisicion_id');
     }
+
+    public function productoCatalogo()
+    {
+        return $this->belongsTo(Producto::class, 'codigo_producto', 'codigo_producto');
+    }
 }

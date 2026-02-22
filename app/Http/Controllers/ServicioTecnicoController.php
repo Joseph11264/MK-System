@@ -7,6 +7,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class ServicioTecnicoController
 {
@@ -67,4 +68,36 @@ class ServicioTecnicoController
 
         return redirect()->route('st.index')->with('success', 'Ticket ST creado exitosamente.');
     }
+
+    public function generarReporte($id)
+    {
+    // Buscamos el ticket con sus relaciones
+    $ticket = RequisicionSt::with(['detalles', 'tecnico', 'creador'])->findOrFail($id);
+    
+    // Cargamos la vista del reporte
+    $pdf = Pdf::loadView('st.reporte', compact('ticket'));
+    
+    // Retornamos el PDF para visualización
+    return $pdf->stream("Ticket_ST_{$ticket->nro_orden_st}.pdf");
+    }
+
+    public function show($id)
+    {
+        $ticket = RequisicionSt::with(['creador', 'tecnico', 'detalles'])->findOrFail($id);
+        return view('st.show', compact('ticket'));
+    }
+
+    public function update(Request $request, $id)
+    {
+        $request->validate([
+            'status' => 'required|in:Pendiente,En Curso,Completado,Cancelado'
+        ]);
+        
+        $ticket = RequisicionSt::findOrFail($id);
+        $ticket->update(['status' => $request->status]);
+        
+        return back()->with('success', 'El estado del ticket de Servicio Técnico ha sido actualizado.');
+    }
+
+     
 }

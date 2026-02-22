@@ -17,8 +17,17 @@
         <div class="row">
             <div class="col-md-6 mb-2">
                 <p class="mb-1"><strong>Nro. Requisición:</strong> {{ $requisicion->id }}</p>
+                <p class="mb-1">
+                    <strong>Tipo:</strong> 
+                    @if($requisicion->tipo === 'Devolucion')
+                        <span class="badge bg-warning text-dark fs-6">⬆️ Devolución</span>
+                    @else
+                        <span class="badge bg-primary fs-6">⬇️ Requisición</span>
+                    @endif
+                </p>
+                <p class="mb-1"><strong>Nro. Requisición:</strong> {{ $requisicion->id }}</p>
                 <p class="mb-1"><strong>Nro. Técnico:</strong> {{ $requisicion->nro_tecnico }}</p>
-                <p class="mb-1"><strong>Nombre Técnico:</strong> {{ $requisicion->nombre_tecnico }}</p>
+                <p class="mb-1"><strong>Técnico:</strong> {{ $requisicion->nombre_tecnico }}</p>
             </div>
             
             <div class="col-md-6 mb-2">
@@ -38,43 +47,45 @@
     
     <h3 class="h5 text-primary mb-3">📦 Productos Solicitados</h3>
     
-    @if($requisicion->detalles->count() > 0)
-        <div class="table-responsive bg-white shadow-sm rounded border">
-            <table class="table table-bordered table-striped mb-0">
-                <thead class="table-light">
-                    <tr>
-                        <th class="text-center" style="width: 5%;">#</th>
-                        <th>Código Producto</th>
-                        <th class="text-center">Cantidad Requerida</th>
-                        <th>Observación Producto</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach($requisicion->detalles as $index => $detalle)
-                    <tr>
-                        <td class="text-center fw-bold">{{ $index + 1 }}</td>
-                        <td>{{ $detalle->codigo_producto }}</td>
-                        <td class="text-center fw-bold text-primary">{{ $detalle->cantidad }}</td>
-                        <td class="text-muted">{{ $detalle->observacion ?: '-' }}</td>
-                    </tr>
-                    @endforeach
-                </tbody>
-            </table>
-        </div>
-    @else
-        <div class="alert alert-warning shadow-sm border-warning">
-            ⚠️ Esta requisición no tiene detalles de productos asociados.
-        </div>
-    @endif
-    
+    <div class="table-responsive bg-white shadow-sm rounded border">
+        <table class="table table-bordered table-striped mb-0 align-middle">
+            <thead class="table-light">
+                <tr>
+                    <th class="text-center" style="width: 5%;">#</th>
+                    <th style="width: 15%;">Código</th>
+                    <th style="width: 35%;">Descripción en Catálogo</th>
+                    <th class="text-center" style="width: 10%;">Cantidad</th>
+                    <th style="width: 35%;">Observación</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach($requisicion->detalles as $index => $detalle)
+                <tr>
+                    <td class="text-center fw-bold">{{ $index + 1 }}</td>
+                    <td class="fw-bold">{{ $detalle->codigo_producto }}</td>
+                    <td>
+                        @if($detalle->productoCatalogo)
+                            <span class="text-success fw-bold">✅ {{ $detalle->productoCatalogo->descripcion }}</span>
+                        @else
+                            <span class="text-danger fw-bold">⚠️ No se ha añadido al sistema</span>
+                        @endif
+                    </td>
+                    <td class="text-center fw-bold text-primary fs-5">{{ $detalle->cantidad }}</td>
+                    <td class="text-muted">{{ $detalle->observacion ?: '-' }}</td>
+                </tr>
+                @endforeach
+            </tbody>
+        </table>
+    </div>
+
     <div class="mt-4 d-flex gap-2">
-        @if($requisicion->status !== 'Completado')
+        @if(!in_array($requisicion->status, ['Completado', 'Cancelado']))
             <a href="{{ route('requisiciones.edit', $requisicion->id) }}" class="btn btn-success fw-bold">
                 📝 Modificar / Avanzar
             </a>
         @endif
         
-        <a href="#" target="_blank" class="btn btn-primary fw-bold">
+        <a href="{{ route('requisiciones.reporte', $requisicion->id) }}" target="_blank" class="btn btn-primary fw-bold">
             Generar PDF 📄
         </a>
     </div>

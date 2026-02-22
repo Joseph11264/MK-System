@@ -24,6 +24,19 @@
     <form action="{{ route('requisiciones.store') }}" method="POST" id="formRequisicion" class="bg-white p-4 rounded shadow-sm border">
         @csrf <fieldset class="border p-3 rounded mb-4">
             <legend class="float-none w-auto px-2 fw-bold text-primary fs-5">Información del Técnico</legend>
+
+            <div class="mb-4 p-3 bg-light rounded border">
+                <label class="fw-bold me-3">Tipo de Operación (*):</label>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="tipo" id="tipoReq" value="Requisicion" checked>
+                    <label class="form-check-label text-primary fw-bold" for="tipoReq">⬇️ Requisición (Salida)</label>
+                </div>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="tipo" id="tipoDev" value="Devolucion">
+                    <label class="form-check-label text-warning fw-bold" for="tipoDev">⬆️ Devolución (Entrada)</label>
+                </div>
+            </div>
+            
             <div class="row">
                 <div class="col-md-6 mb-3">
                     <label for="nro_tecnico" class="form-label fw-bold">Número de Técnico</label>
