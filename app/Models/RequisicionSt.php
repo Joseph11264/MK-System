@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 class RequisicionSt extends Model
 {
     protected $table = 'requisicion_st';
-    protected $fillable = ['nro_orden_st', 'tipo_st', 'cliente', 'telefono_cliente', 'correo_cliente', 'codigo_equipo', 'status', 'estado_pago', 'referencia_pago', 'materiales_entregados', 'precio_reparacion', 'usuario_creador_id', 'tecnico_asignado_id'];
+    protected $fillable = ['nro_orden_st', 'tipo_st', 'cliente', 'telefono_cliente', 'correo_cliente', 'codigo_equipo', 'status', 'estado_pago', 'referencia_pago', 'materiales_entregados', 'precio_reparacion', 'diagnostico', 'usuario_creador_id', 'tecnico_asignado_id','falla_reportada'];
     protected $casts = [
         'materiales_entregados' => 'boolean',
     ];

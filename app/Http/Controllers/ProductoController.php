@@ -37,12 +37,18 @@ class ProductoController
     public function store(Request $request)
     {
         $request->validate([
-            'codigo_producto' => 'required|string|unique:productos,codigo_producto',
+            'codigo_producto' => ['required', 'string', 'regex:/^\d{6}[A-Za-z]?$/', 'unique:productos,codigo_producto'],
             'descripcion' => 'required|string|max:255',
             'familia_id' => 'nullable|exists:familias,id',
-            'imagen' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048'
+            // Añadimos las reglas estrictas de formato y peso (2048 KB = 2MB)
+            'imagen' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048' 
         ], [
-            'codigo_producto.unique' => '⚠️ Este código de producto ya existe.'
+            'codigo_producto.regex' => '⚠️ El código debe tener exactamente 6 números y una letra opcional.',
+            'codigo_producto.unique' => '⚠️ Este código de producto ya existe.',
+            // Nuevos mensajes de error para la imagen
+            'imagen.image' => '⚠️ El archivo subido debe ser una imagen.',
+            'imagen.mimes' => '⚠️ Solo se permiten imágenes en formato JPG, PNG o WEBP.',
+            'imagen.max' => '⚠️ La imagen es muy pesada. El tamaño máximo es de 2MB.'
         ]);
 
         $datos = $request->all();
@@ -52,6 +58,63 @@ class ProductoController
 
         Producto::create($datos);
         return redirect()->route('productos.index')->with('success', 'Producto registrado.');
+    }
+
+    public function show($id)
+    {
+        $producto = Producto::findOrFail($id);
+        
+        // Buscamos dónde se ha usado este producto (requiere tener los modelos de Detalle creados)
+        $salidasAlmacen = \App\Models\DetalleRequisicion::where('codigo_producto', $producto->codigo_producto)->with('requisicion')->get();
+        $salidasST = \App\Models\DetalleRequisicionSt::where('codigo_producto', $producto->codigo_producto)->with('requisicionSt')->get();
+
+        return view('productos.show', compact('producto', 'salidasAlmacen', 'salidasST'));
+    }
+
+    public function edit($id)
+    {
+        // 1. Buscamos el producto y las familias
+        $producto = Producto::findOrFail($id);
+        $familias = \App\Models\Familia::orderBy('nombre', 'asc')->get();
+        
+        // 2. Mandamos los datos a la vista edit.blade.php
+        return view('productos.edit', compact('producto', 'familias'));
+    }
+
+    public function update(Request $request, $id)
+    {
+        $producto = Producto::findOrFail($id);
+
+        // Validamos asegurándonos de que el código no se repita con OTRO producto,
+        // pero ignorando el ID del producto actual para que no dé error consigo mismo.
+        $request->validate([
+            'codigo_producto' => ['required', 'string', 'regex:/^\d{6}[A-Za-z]?$/', 'unique:productos,codigo_producto'],
+            'descripcion' => 'required|string|max:255',
+            'familia_id' => 'nullable|exists:familias,id',
+            // Añadimos las reglas estrictas de formato y peso (2048 KB = 2MB)
+            'imagen' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048' 
+        ], [
+            'codigo_producto.regex' => '⚠️ El código debe tener exactamente 6 números y una letra opcional.',
+            'codigo_producto.unique' => '⚠️ Este código de producto ya existe.',
+            // Nuevos mensajes de error para la imagen
+            'imagen.image' => '⚠️ El archivo subido debe ser una imagen.',
+            'imagen.mimes' => '⚠️ Solo se permiten imágenes en formato JPG, PNG o WEBP.',
+            'imagen.max' => '⚠️ La imagen es muy pesada. El tamaño máximo es de 2MB.'
+        ]);
+
+        $datos = $request->except('imagen');
+
+        // Si el usuario sube una nueva imagen, borramos la vieja y guardamos la nueva
+        if ($request->hasFile('imagen')) {
+            if ($producto->imagen) {
+                \Illuminate\Support\Facades\Storage::disk('public')->delete($producto->imagen);
+            }
+            $datos['imagen'] = $request->file('imagen')->store('productos', 'public');
+        }
+
+        $producto->update($datos);
+        
+        return redirect()->route('productos.index')->with('success', '✅ Producto actualizado correctamente.');
     }
 
     // Método para eliminar

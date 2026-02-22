@@ -69,10 +69,14 @@
                             @endif
                         </td>
                         <td class="text-center">
-                            <form action="{{ route('productos.destroy', $producto->id) }}" method="POST" onsubmit="return confirm('¿Seguro que deseas eliminar este producto?');">
-                                @csrf @method('DELETE')
-                                <button type="submit" class="btn btn-sm btn-outline-danger fw-bold">🗑️ Eliminar</button>
-                            </form>
+                            <div class="d-flex justify-content-center gap-2">
+                                <a href="{{ route('productos.show', $producto->id) }}" class="btn btn-sm btn-outline-primary" title="Ver Historial">🔎</a>
+                                <a href="{{ route('productos.edit', $producto->id) }}" class="btn btn-sm btn-outline-warning" title="Editar">✏️</a>
+                                <form action="{{ route('productos.destroy', $producto->id) }}" method="POST" onsubmit="return confirm('¿Seguro que deseas eliminar este producto?');" class="m-0">
+                                    @csrf @method('DELETE')
+                                    <button type="submit" class="btn btn-sm btn-outline-danger" title="Eliminar">🗑️</button>
+                                </form>
+                            </div>
                         </td>
                     </tr>
                     @empty

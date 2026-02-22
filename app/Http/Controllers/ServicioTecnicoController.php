@@ -15,10 +15,41 @@ class ServicioTecnicoController
 {
     public function index(Request $request)
     {
-        // Traemos las requisiciones con los datos de ambos usuarios y detalles
-        $tickets = RequisicionSt::with(['creador', 'tecnico', 'detalles'])
-            ->orderBy('created_at', 'desc')
-            ->paginate(50);
+        $query = RequisicionSt::with(['creador', 'tecnico', 'detalles']);
+
+        // 1. APLICAR FILTROS DE BÚSQUEDA
+        if ($request->filled('orden')) {
+            $query->where('nro_orden_st', 'like', '%' . $request->orden . '%');
+        }
+        if ($request->filled('cliente')) {
+            $query->where('cliente', 'like', '%' . $request->cliente . '%');
+        }
+        if ($request->filled('equipo')) {
+            $query->where('codigo_equipo', 'like', '%' . $request->equipo . '%');
+        }
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+        if ($request->filled('tipo_st')) {
+            $query->where('tipo_st', $request->tipo_st);
+        }
+        if ($request->filled('fecha_desde')) {
+            $query->whereDate('created_at', '>=', $request->fecha_desde);
+        }
+        if ($request->filled('fecha_hasta')) {
+            $query->whereDate('created_at', '<=', $request->fecha_hasta);
+        }
+
+        $columnasPermitidas = ['nro_orden_st', 'cliente', 'codigo_equipo', 'status', 'tipo_st', 'created_at'];
+        
+        $sortBy = $request->input('sort_by', 'created_at'); 
+        $sortDir = $request->input('sort_dir', 'desc');
+
+        if (!in_array($sortBy, $columnasPermitidas)) $sortBy = 'created_at';
+        if (!in_array($sortDir, ['asc', 'desc'])) $sortDir = 'desc';
+
+
+        $tickets = $query->orderBy($sortBy, $sortDir)->paginate(50);
             
         return view('st.index', compact('tickets'));
     }
@@ -40,54 +71,40 @@ class ServicioTecnicoController
         return view('st.create', compact('tecnicos', 'proximoNro'));
     }
 
-   public function store(Request $request)
+    public function store(Request $request)
     {
-        // Generador de número automático
         $ultimoTicket = RequisicionSt::orderBy('id', 'desc')->first();
         $nuevoNroOrden = ($ultimoTicket && is_numeric($ultimoTicket->nro_orden_st)) ? $ultimoTicket->nro_orden_st + 1 : 12600;
 
-        // VALIDACIÓN: Aquí es donde agregamos 'tipo_st' para que no dé el error
         $validated = $request->validate([
             'tipo_st' => 'required|in:Reparacion,Garantia', 
             'cliente' => 'required|string',
             'telefono_cliente' => 'nullable|string|max:20', 
             'correo_cliente' => 'nullable|email|max:100', 
             'codigo_equipo' => 'required|string',
-            'tecnico_asignado_id' => 'nullable|exists:usuarios,id',
-            'productos' => 'required|array|min:1',
-            'productos.*.codigo' => 'required|string',
-            'productos.*.cantidad' => 'required|integer|min:1',
-            'productos.*.observacion' => 'nullable|string',
+            'falla_reportada' => 'required|string',
+            // CORREGIDO: Tabla 'usuarios' en lugar de 'users'
+            'tecnico_asignado_id' => 'nullable|exists:usuarios,id' 
         ]);
 
-        DB::transaction(function () use ($validated, $nuevoNroOrden) {
-            $ticket = RequisicionSt::create([
-                'nro_orden_st' => (string) $nuevoNroOrden,
-                'tipo_st' => $validated['tipo_st'], // Ya no dará error
-                'cliente' => $validated['cliente'],
-                'telefono_cliente' => $validated['telefono_cliente'] ?? null,
-                'correo_cliente' => $validated['correo_cliente'] ?? null,
-                'codigo_equipo' => $validated['codigo_equipo'],
-                'tecnico_asignado_id' => $validated['tecnico_asignado_id'],
-                'usuario_creador_id' => Auth::id(),
-                'status' => 'Pendiente',
-                'materiales_entregados' => false
-            ]);
+        $ticket = RequisicionSt::create([
+            'nro_orden_st' => (string) $nuevoNroOrden,
+            'tipo_st' => $validated['tipo_st'],
+            'cliente' => $validated['cliente'],
+            'telefono_cliente' => $validated['telefono_cliente'] ?? null,
+            'correo_cliente' => $validated['correo_cliente'] ?? null,
+            'codigo_equipo' => $validated['codigo_equipo'],
+            'falla_reportada' => $validated['falla_reportada'],
+            'tecnico_asignado_id' => $validated['tecnico_asignado_id'],
+            'usuario_creador_id' => auth()->id(),
+            'status' => 'Pendiente', // Solo Pendiente
+            'materiales_entregados' => false,
+            'precio_reparacion' => 0
+        ]);
 
-            $detalles = array_map(function($prod) {
-                return [
-                    'codigo_producto' => $prod['codigo'],
-                    'cantidad' => $prod['cantidad'],
-                    'observacion' => $prod['observacion'] ?? null,
-                ];
-            }, $validated['productos']);
-            
-            $ticket->detalles()->createMany($detalles);
-        });
-
-        return redirect()->route('st.index')->with('success', 'Ticket ST creado. Orden: ' . $nuevoNroOrden);
+        return redirect()->route('st.show', $ticket->id)->with('success', '✅ Orden de ST #' . $nuevoNroOrden . ' creada exitosamente. Imprima el recibo.');
     }
-
+    
     public function generarReporte($id)
     {
     // Buscamos el ticket con sus relaciones
@@ -103,24 +120,20 @@ class ServicioTecnicoController
     public function show($id)
     {
         $ticket = RequisicionSt::with(['creador', 'tecnico', 'detalles'])->findOrFail($id);
-        return view('st.show', compact('ticket'));
+        $tecnicos = \App\Models\User::whereIn('rol', ['ServicioTecnico', 'SuperAdmin'])->orderBy('nombre', 'asc')->get();
+        
+        return view('st.show', compact('ticket', 'tecnicos'));
     }
 
     public function edit($id)
     {
         $ticket = RequisicionSt::with('detalles.productoCatalogo')->findOrFail($id);
 
-        // REGLA 1: Si está completado o cancelado, bloqueo total
         if (in_array($ticket->status, ['Completado', 'Cancelado'])) {
             return back()->with('error', 'Los tickets finalizados no pueden ser modificados.');
         }
 
-        // REGLA 2: Si está En Curso, solo personal autorizado puede entrar
-        if ($ticket->status === 'En Curso' && !in_array(auth()->user()->rol, ['SuperAdmin', 'Administracion', 'ServicioTecnico'])) {
-            return back()->with('error', 'No tienes permisos para modificar este ticket En Curso.');
-        }
-
-        $tecnicos = User::whereIn('rol', ['ServicioTecnico', 'SuperAdmin'])->get();
+        $tecnicos = \App\Models\User::whereIn('rol', ['ServicioTecnico', 'SuperAdmin'])->orderBy('nombre', 'asc')->get();
         return view('st.edit', compact('ticket', 'tecnicos'));
     }
 
@@ -128,7 +141,13 @@ class ServicioTecnicoController
     {
         $ticket = RequisicionSt::findOrFail($id);
 
-        // 1. FLUJO: Confirmar Pago (Aplica para Reparaciones)
+        // 1. FLUJO: Reasignar Técnico Rápido
+        if ($request->has('reasignar_tecnico') && in_array(auth()->user()->rol, ['SuperAdmin', 'Administracion'])) {
+            $ticket->update(['tecnico_asignado_id' => $request->tecnico_asignado_id]);
+            return back()->with('success', '✅ Técnico reasignado correctamente.');
+        }
+
+        // 2. FLUJO: Confirmar Pago
         if ($request->has('confirmar_pago') && $ticket->status === 'Completado') {
             $request->validate(['referencia_pago' => 'required|string|max:255']);
             $ticket->update([
@@ -138,62 +157,87 @@ class ServicioTecnicoController
             return back()->with('success', 'Pago confirmado y referencia guardada exitosamente.');
         }
 
-        // 2. FLUJO: Guardar Datos de Cierre (Materiales y Precio)
-        if ($request->has('guardar_datos_cierre')) {
-            // Si es garantía, ignoramos lo que envíe el formulario y ponemos 0
+        // ========================================================
+        // 3. FLUJO: Guardar Diagnóstico y Precio (SOLO TÉCNICOS)
+        // ========================================================
+        if ($request->has('guardar_diagnostico')) {
+            $request->validate(['diagnostico' => 'required|string']);
             $precio = $ticket->tipo_st === 'Garantia' ? 0 : $request->precio_reparacion;
             
             $ticket->update([
-                'materiales_entregados' => $request->materiales_entregados,
-                'precio_reparacion' => $precio
+                'precio_reparacion' => $precio,
+                'diagnostico' => $request->diagnostico
             ]);
-            return back()->with('success', 'Datos de cierre (Materiales y Precio) actualizados.');
+            return back()->with('success', '✅ Diagnóstico técnico y precio actualizados.');
         }
 
-        // 3. FLUJO: Edición Completa de Repuestos
-        if ($ticket->status === 'Pendiente') {
-            
-            // VALIDACIÓN: También debe estar aquí el 'tipo_st'
+        // ========================================================
+        // 4. FLUJO: Despacho de Materiales (SOLO ALMACÉN)
+        // ========================================================
+        if ($request->has('guardar_materiales')) {
+            $ticket->update([
+                'materiales_entregados' => $request->materiales_entregados
+            ]);
+            $estado = $request->materiales_entregados ? 'entregados al técnico' : 'marcados como NO entregados';
+            return back()->with('success', '📦 Repuestos ' . $estado . '.');
+        }
+
+        // 5. FLUJO: Edición de Revisión y Repuestos (Desde el botón "Realizar Revisión")
+        if ($request->has('actualizar_ticket')) {
             $validated = $request->validate([
-                'tipo_st' => 'required|in:Reparacion,Garantia',
                 'cliente' => 'required|string',
                 'codigo_equipo' => 'required|string', 
+                'falla_reportada' => 'required|string',
                 'tecnico_asignado_id' => 'nullable|exists:usuarios,id',
                 'status' => 'required|in:Pendiente,Completado,Cancelado',
-                'productos' => 'required|array|min:1',
-                'productos.*.codigo' => 'required|string',
-                'productos.*.cantidad' => 'required|integer|min:1',
+                'productos' => 'nullable|array',
+                'productos.*.codigo' => 'required_with:productos|string',
+                'productos.*.cantidad' => 'required_with:productos|integer|min:1',
                 'productos.*.observacion' => 'nullable|string',
             ]);
 
+            // LÓGICA INTELIGENTE: Comparamos los repuestos viejos con los nuevos
+            // Convertimos ambas listas a formato "codigo:cantidad" para compararlas exactamente
             $actuales = $ticket->detalles->map(fn($d) => $d->codigo_producto . ':' . $d->cantidad)->sort()->values()->toArray();
-            $nuevos = collect($request->productos)->map(fn($p) => $p['codigo'] . ':' . $p['cantidad'])->sort()->values()->toArray();
+            $nuevos = collect($request->productos ?? [])->map(fn($p) => $p['codigo'] . ':' . $p['cantidad'])->sort()->values()->toArray();
             
-            $materiales = $ticket->materiales_entregados;
-            $precio = $ticket->precio_reparacion;
+            $materiales_entregados = $ticket->materiales_entregados;
+            $mensaje_extra = '';
+
+            // Si hubo AL GÚN CAMBIO en los repuestos, quitamos la marca de "Entregado"
             if ($actuales !== $nuevos) {
-                $materiales = false; 
-                $precio = null;
+                $materiales_entregados = false; // El candado de seguridad se activa
+                $mensaje_extra = ' ⚠️ Se modificaron los repuestos, por lo que Almacén debe confirmar el despacho nuevamente.';
             }
 
-            DB::transaction(function () use ($ticket, $validated, $materiales, $precio) {
+            \Illuminate\Support\Facades\DB::transaction(function () use ($ticket, $validated, $request, $materiales_entregados) {
                 $ticket->update([
-                    'tipo_st' => $validated['tipo_st'], // Ya no dará error
                     'cliente' => $validated['cliente'],
+                    'telefono_cliente' => $request->telefono_cliente,
+                    'correo_cliente' => $request->correo_cliente,
                     'codigo_equipo' => $validated['codigo_equipo'],
+                    'falla_reportada' => $validated['falla_reportada'],
                     'tecnico_asignado_id' => $validated['tecnico_asignado_id'],
                     'status' => $validated['status'],
-                    'materiales_entregados' => $materiales,
-                    'precio_reparacion' => $precio
+                    'materiales_entregados' => $materiales_entregados // <-- AQUÍ SE GUARDA EL RESETEO
                 ]);
 
+                // Borramos los viejos y guardamos la nueva lista
                 $ticket->detalles()->delete();
-                $nuevosDetalles = array_map(function($prod) {
-                    return ['codigo_producto' => $prod['codigo'], 'cantidad' => $prod['cantidad'], 'observacion' => $prod['observacion'] ?? null];
-                }, $validated['productos']);
-                $ticket->detalles()->createMany($nuevosDetalles);
+                if ($request->has('productos')) {
+                    $nuevosDetalles = array_map(function($prod) {
+                        return [
+                            'codigo_producto' => $prod['codigo'], 
+                            'cantidad' => $prod['cantidad'], 
+                            'observacion' => $prod['observacion'] ?? null
+                        ];
+                    }, $validated['productos']);
+                    $ticket->detalles()->createMany($nuevosDetalles);
+                }
             });
-            return redirect()->route('st.index')->with('success', 'Ticket ST actualizado.');
+            
+            return redirect()->route('st.show', $ticket->id)
+                             ->with('success', '✅ Revisión técnica actualizada.' . $mensaje_extra);
         }
     }
     
@@ -203,6 +247,10 @@ class ServicioTecnicoController
         
         if (!$ticket->materiales_entregados) {
             return back()->with('error', '⚠️ Debes entregar los materiales antes de completar el servicio.');
+        }
+
+        if (empty($ticket->diagnostico)) {
+            return back()->with('error', '⚠️ El Diagnóstico Técnico es obligatorio para completar el servicio.');
         }
 
         if ($ticket->tipo_st === 'Reparacion') {

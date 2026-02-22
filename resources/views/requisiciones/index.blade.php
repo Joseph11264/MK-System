@@ -5,66 +5,89 @@
 @section('content')
 <section class="main-content-wrapper">
 
-    <h2 class="text-primary">📄 Consulta y Filtrado de Requisiciones</h2>
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2 class="text-primary m-0">📄 Consulta y Filtrado de Requisiciones</h2>
+        <a href="{{ route('requisiciones.create') }}" class="btn btn-success fw-bold shadow-sm">➕ Nueva Requisición</a>
+    </div>
     <hr>
     
     <section class="quick-filters text-center mb-4">
         <p class="fw-bold mb-2">Filtro Rápido por Estado:</p>
-        <a href="{{ route('requisiciones.index', ['status' => 'Pendiente']) }}" class="btn btn-danger">🔴 Pendientes</a>
-        <a href="{{ route('requisiciones.index', ['status' => 'En Curso']) }}" class="btn btn-warning">🟠 En Curso</a>
-        <a href="{{ route('requisiciones.index', ['status' => 'Completado']) }}" class="btn btn-success">🟢 Completado</a>
-        <a href="{{ route('requisiciones.index') }}" class="btn btn-outline-info">🧹 Mostrar Todos</a>
+        <a href="{{ route('requisiciones.index', ['status' => 'Pendiente']) }}" class="btn btn-danger shadow-sm">🔴 Pendientes</a>
+        <a href="{{ route('requisiciones.index', ['status' => 'En Curso']) }}" class="btn btn-warning shadow-sm">🟠 En Curso</a>
+        <a href="{{ route('requisiciones.index', ['status' => 'Completado']) }}" class="btn btn-success shadow-sm">🟢 Completado</a>
     </section>
 
-    <h3 class="text-primary h5">Filtros Personalizados</h3>
-    <form action="{{ route('requisiciones.index') }}" method="GET" class="filter-form bg-light p-3 rounded mb-4 d-flex flex-wrap gap-2 align-items-end border">
-        
-        <div class="form-group-filter">
-            <label class="fw-bold form-label mb-1">ID Requisición:</label>
-            <input type="text" name="id" class="form-control form-control-sm" value="{{ request('id') }}" style="width: 80px;">
+    <div class="card mb-4 shadow-sm border-0">
+        <div class="card-header bg-white text-primary fw-bold border-bottom-0 pt-3 pb-0">
+            Filtros Personalizados
         </div>
+        <div class="card-body bg-light rounded">
+            <form action="{{ route('requisiciones.index') }}" method="GET">
+                <div class="row g-2 align-items-end">
+                    <div class="col-md-2">
+                        <label class="fw-bold fs-6" style="font-size: 0.85rem !important;">Nro Req.</label>
+                        <input type="text" name="id" class="form-control form-control-sm" placeholder="Ej: 5" value="{{ request('id') }}">
+                    </div>
+                    <div class="col-md-2">
+                        <label class="fw-bold fs-6" style="font-size: 0.85rem !important;">Técnico</label>
+                        <input type="text" name="tecnico" class="form-control form-control-sm" placeholder="ID o Nombre" value="{{ request('tecnico') }}">
+                    </div>
+                    <div class="col-md-2">
+                        <label class="fw-bold fs-6" style="font-size: 0.85rem !important;">Tipo</label>
+                        <select name="tipo" class="form-select form-select-sm">
+                            <option value="">Todos</option>
+                            <option value="Requisicion" {{ request('tipo') == 'Requisicion' ? 'selected' : '' }}>Requisición</option>
+                            <option value="Devolucion" {{ request('tipo') == 'Devolucion' ? 'selected' : '' }}>Devolución</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <label class="fw-bold fs-6" style="font-size: 0.85rem !important;">Estado</label>
+                        <select name="status" class="form-select form-select-sm">
+                            <option value="">Todos</option>
+                            <option value="Pendiente" {{ request('status') == 'Pendiente' ? 'selected' : '' }}>Pendiente</option>
+                            <option value="En Curso" {{ request('status') == 'En Curso' ? 'selected' : '' }}>En Curso</option>
+                            <option value="Completado" {{ request('status') == 'Completado' ? 'selected' : '' }}>Completado</option>
+                            <option value="Cancelado" {{ request('status') == 'Cancelado' ? 'selected' : '' }}>Cancelado</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <label class="fw-bold fs-6 text-primary" style="font-size: 0.85rem !important;">📅 Desde</label>
+                        <input type="date" name="fecha_desde" class="form-control form-control-sm" value="{{ request('fecha_desde') }}">
+                    </div>
+                    <div class="col-md-2">
+                        <label class="fw-bold fs-6 text-primary" style="font-size: 0.85rem !important;">📅 Hasta</label>
+                        <input type="date" name="fecha_hasta" class="form-control form-control-sm" value="{{ request('fecha_hasta') }}">
+                    </div>
+                </div>
 
-        <div class="form-group-filter">
-            <label class="fw-bold form-label mb-1">Tipo:</label>
-            <select name="tipo" class="form-select form-select-sm" style="width: 120px;">
-                <option value=""> Todos </option>
-                <option value="Requisicion" {{ request('tipo') == 'Requisicion' ? 'selected' : '' }}>Requisición</option>
-                <option value="Devolucion" {{ request('tipo') == 'Devolucion' ? 'selected' : '' }}>Devolución</option>
-            </select>
+                <div class="d-flex justify-content-between align-items-center mt-3 border-top pt-3">
+                    <div class="d-flex align-items-center gap-2">
+                        <span class="fw-bold text-muted me-2"><i class="text-primary fs-5">🔃</i> Ordenar por:</span>
+                        <select name="sort_by" class="form-select form-select-sm shadow-sm" style="width: auto;">
+                            <option value="created_at" {{ request('sort_by') == 'created_at' ? 'selected' : '' }}>Fecha de Solicitud</option>
+                            <option value="id" {{ request('sort_by') == 'id' ? 'selected' : '' }}>Nro de Requisición</option>
+                            <option value="tipo" {{ request('sort_by') == 'tipo' ? 'selected' : '' }}>Tipo (Req/Dev)</option>
+                            <option value="status" {{ request('sort_by') == 'status' ? 'selected' : '' }}>Estado</option>
+                        </select>
+                        <select name="sort_dir" class="form-select form-select-sm shadow-sm" style="width: auto;">
+                            <option value="desc" {{ request('sort_dir') == 'desc' ? 'selected' : '' }}>Descendente (Z-A)</option>
+                            <option value="asc" {{ request('sort_dir') == 'asc' ? 'selected' : '' }}>Ascendente (A-Z)</option>
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <a href="{{ route('requisiciones.index') }}" class="btn btn-outline-secondary btn-sm me-2">Limpiar Todo</a>
+                        <button type="submit" class="btn btn-primary btn-sm fw-bold px-4 shadow-sm">🔍 Aplicar Filtros</button>
+                    </div>
+                </div>
+            </form>
         </div>
+    </div>
 
-        <div class="form-group-filter">
-            <label class="fw-bold form-label mb-1">Nro Técnico:</label>
-            <input type="text" name="nro_tecnico" class="form-control form-control-sm" value="{{ request('nro_tecnico') }}" style="width: 120px;">
-        </div>
-
-        <div class="form-group-filter">
-            <label class="fw-bold form-label mb-1">Estado:</label>
-            <select name="status" class="form-select form-select-sm" style="width: 130px;">
-                <option value=""> Todos </option>
-                <option value="Pendiente" {{ request('status') == 'Pendiente' ? 'selected' : '' }}>Pendiente</option>
-                <option value="En Curso" {{ request('status') == 'En Curso' ? 'selected' : '' }}>En Curso</option>
-                <option value="Completado" {{ request('status') == 'Completado' ? 'selected' : '' }}>Completado</option>
-            </select>
-        </div>
+    <h3 class="text-primary h5 mb-3">Resultados (Total: {{ $requisiciones->total() }})</h3>
     
-        <div class="form-group-filter">
-            <label class="fw-bold form-label mb-1">Fecha Desde:</label>
-            <input type="date" name="fecha_inicio" class="form-control form-control-sm" value="{{ request('fecha_inicio') }}">
-        </div>
-
-        <div class="form-group-filter">
-            <label class="fw-bold form-label mb-1">Fecha Hasta:</label>
-            <input type="date" name="fecha_fin" class="form-control form-control-sm" value="{{ request('fecha_fin') }}">
-        </div>
-        
-        <button type="submit" class="btn btn-outline-primary btn-sm mb-1">🔍 Aplicar</button>
-        <a href="{{ route('requisiciones.index') }}" class="btn btn-outline-secondary btn-sm mb-1">🧹 Limpiar</a>
-    </form>
-
-    <h3 class="text-primary h5">Resultados (Total: {{ $requisiciones->total() }})</h3>
-    
-    <div class="table-responsive bg-white shadow-sm rounded">
+    <div class="table-responsive bg-white shadow-sm rounded border-0">
         <table class="table table-bordered table-hover text-center mb-0 align-middle">
             <thead class="table-primary text-white">
                 <tr>
@@ -98,11 +121,15 @@
                         <td>{{ $req->detalles->pluck('codigo_producto')->join(', ') }}</td>
                         <td>{{ $req->detalles->pluck('cantidad')->join(', ') }}</td>
                         <td>{{ $req->created_at->format('Y-m-d') }}</td>
-                        <td><span class="badge bg-secondary">{{ $req->status }}</span></td>
+                        <td>
+                            <span class="badge bg-{{ $req->status === 'Entregado' ? 'success' : ($req->status === 'En Curso' ? 'warning text-dark' : ($req->status === 'Cancelado' ? 'danger' : 'secondary')) }}">
+                                {{ $req->status }}
+                            </span>
+                        </td>
                         <td>
                             @if(in_array($req->status, ['Pendiente', 'En Curso']))
                                 @php
-                                    $nextStatus = $req->status === 'Pendiente' ? 'En Curso' : 'Completado';
+                                    $nextStatus = $req->status === 'Pendiente' ? 'En Curso' : 'Entregado';
                                 @endphp
                                 <form action="{{ route('requisiciones.avanzar', $req->id) }}" method="POST" class="m-0 p-0 mb-1" onsubmit="return confirm('¿Seguro que deseas avanzar esta requisición a {{ $nextStatus }}?');">
                                     @csrf
@@ -127,7 +154,7 @@
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="8" class="p-4 text-muted">No se encontraron requisiciones.</td>
+                        <td colspan="9" class="p-4 text-muted fs-5">No se encontraron requisiciones con estos filtros.</td>
                     </tr>
                 @endforelse
             </tbody>

@@ -97,6 +97,13 @@
         </tr>
     </table>
 
+    <div style="margin-top: 15px; margin-bottom: 20px; border: 1px solid #ddd; border-radius: 4px; padding: 10px; background-color: #fcfcfc;">
+        <h4 style="margin: 0 0 5px 0; color: #153b75; font-size: 14px;">Diagnóstico Técnico / Fallas Detectadas:</h4>
+        <p style="margin: 0; font-size: 13px; line-height: 1.5;">
+            {{ $ticket->diagnostico ?? 'Aún no se ha registrado un diagnóstico técnico para este equipo.' }}
+        </p>
+    </div>
+
     <h3 style="color: #0056b3; margin-bottom: 10px; font-size: 14px;">Repuestos / Componentes Asignados</h3>
     
     <table class="products-table">

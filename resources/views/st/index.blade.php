@@ -9,6 +9,74 @@
         <h2 class="text-primary m-0">🔧 Consulta de Tickets (Servicio Técnico)</h2>
         <a href="{{ route('st.create') }}" class="btn btn-primary fw-bold">➕ Nuevo Ticket</a>
     </div>
+
+    <div class="card mb-4 shadow-sm border-0">
+        <div class="card-body bg-light rounded">
+            <form action="{{ route('st.index') }}" method="GET">
+                <div class="row g-2 align-items-end">
+                    <div class="col-md-1">
+                        <label class="fw-bold fs-6" style="font-size: 0.85rem !important;">Orden</label>
+                        <input type="text" name="orden" class="form-control form-control-sm" value="{{ request('orden') }}">
+                    </div>
+                    <div class="col-md-2">
+                        <label class="fw-bold fs-6" style="font-size: 0.85rem !important;">Cliente</label>
+                        <input type="text" name="cliente" class="form-control form-control-sm" value="{{ request('cliente') }}">
+                    </div>
+                    <div class="col-md-2">
+                        <label class="fw-bold fs-6" style="font-size: 0.85rem !important;">Equipo/Serial</label>
+                        <input type="text" name="equipo" class="form-control form-control-sm" value="{{ request('equipo') }}">
+                    </div>
+                    <div class="col-md-2">
+                        <label class="fw-bold fs-6" style="font-size: 0.85rem !important;">Tipo</label>
+                        <select name="tipo_st" class="form-select form-select-sm">
+                            <option value="">Todos</option>
+                            <option value="Reparacion" {{ request('tipo_st') == 'Reparacion' ? 'selected' : '' }}> Reparación</option>
+                            <option value="Garantia" {{ request('tipo_st') == 'Garantia' ? 'selected' : '' }}> Garantía</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <label class="fw-bold fs-6" style="font-size: 0.85rem !important;">Estado</label>
+                        <select name="status" class="form-select form-select-sm">
+                            <option value="">Todos</option>
+                            <option value="Pendiente" {{ request('status') == 'Pendiente' ? 'selected' : '' }}>Pendiente</option>
+                            <option value="Completado" {{ request('status') == 'Completado' ? 'selected' : '' }}>Completado</option>
+                        </select>
+                    </div>
+                    <div class="col-md-1">
+                        <label class="fw-bold fs-6 text-primary" style="font-size: 0.85rem !important;">📅 Desde</label>
+                        <input type="date" name="fecha_desde" class="form-control form-control-sm" value="{{ request('fecha_desde') }}">
+                    </div>
+                    <div class="col-md-2">
+                        <label class="fw-bold fs-6 text-primary" style="font-size: 0.85rem !important;">📅 Hasta</label>
+                        <input type="date" name="fecha_hasta" class="form-control form-control-sm" value="{{ request('fecha_hasta') }}">
+                    </div>
+                </div>
+                
+                <div class="d-flex justify-content-between align-items-center mt-3 border-top pt-3">
+                    <div class="d-flex align-items-center gap-2">
+                        <span class="fw-bold text-muted me-2"><i class="text-primary fs-5">🔃</i> Ordenar por:</span>
+                        <select name="sort_by" class="form-select form-select-sm shadow-sm" style="width: auto;">
+                            <option value="created_at" {{ request('sort_by') == 'created_at' ? 'selected' : '' }}>Fecha de Ingreso</option>
+                            <option value="nro_orden_st" {{ request('sort_by') == 'nro_orden_st' ? 'selected' : '' }}>Número de Orden</option>
+                            <option value="cliente" {{ request('sort_by') == 'cliente' ? 'selected' : '' }}>Nombre del Cliente</option>
+                            <option value="status" {{ request('sort_by') == 'status' ? 'selected' : '' }}>Estado del Ticket</option>
+                            <option value="tipo_st" {{ request('sort_by') == 'tipo_st' ? 'selected' : '' }}>Tipo de Servicio</option>
+                        </select>
+                        <select name="sort_dir" class="form-select form-select-sm shadow-sm" style="width: auto;">
+                            <option value="desc" {{ request('sort_dir') == 'desc' ? 'selected' : '' }}>Descendente (Más reciente / Z-A)</option>
+                            <option value="asc" {{ request('sort_dir') == 'asc' ? 'selected' : '' }}>Ascendente (Más antiguo / A-Z)</option>
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <a href="{{ route('st.index') }}" class="btn btn-outline-secondary btn-sm me-2">Limpiar Todo</a>
+                        <button type="submit" class="btn btn-primary btn-sm fw-bold px-4 shadow-sm">🔍 Aplicar Búsqueda y Orden</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    
     <hr>
     
     <div class="table-responsive bg-white shadow-sm rounded">

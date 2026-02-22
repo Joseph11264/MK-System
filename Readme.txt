@@ -13,7 +13,7 @@ Principales módulos:
 
 2. ESTRUCTURA DE CÓDIGO RELEVANTE
 ---------------------------------
-- Controladores: app/Http/Controllers/ (Lógica de negocio: RequisicionController, UserController).
+- Controladores: app/Http/Controllers/ (Lógica de negocio: RequisicionController, UserController, ServicioTecnicoController, ClienteController).
 - Modelos: app/Models/ (Interacción con BD: Requisicion, DetalleRequisicion, User).
 - Vistas: resources/views/ (Interfaz gráfica con Blade y Bootstrap).
 - Rutas: routes/web.php (Definición de URLs y protección por middleware).
@@ -64,6 +64,17 @@ G) Panel de Control y Notificaciones (22/02/2026 - Parte 3)
      * Integración de gráficas estadísticas (Chart.js) para monitorear tickets y requisiciones.
    - Correos:
      * Clase 'TicketCompletadoMail' para envío automático de reportes PDF al finalizar un servicio.
+
+H) Módulo de Clientes (22/02/2026 - Parte 4)
+   - Controlador: ClienteController.
+   - Funcionalidad: 
+     * Directorio de clientes con búsqueda inteligente.
+     * Historial de reparaciones y equipos por cliente.
+     * API interna para autocompletado en formularios de ST.
+
+I) Gestión de Familias (Categorización)
+   - Controlador: FamiliaController.
+   - Funcionalidad: Organización de productos en familias con rangos de códigos.
 
 4. NOTAS DE DESPLIEGUE
 ----------------------

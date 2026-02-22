@@ -5,7 +5,11 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\RequisicionController;
 use App\Http\Controllers\ServicioTecnicoController;
 use App\Http\Controllers\ProductoController;
+use App\Http\Controllers\FamiliaController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\ClienteController;
+use App\Models\Cliente;
+use Illuminate\Http\Request;
 
 /*
 |--------------------------------------------------------------------------
@@ -28,6 +32,12 @@ Route::post('/logout', [UserController::class, 'logout'])->name('logout');
 | Rutas Protegidas (Requieren inicio de sesión)
 |--------------------------------------------------------------------------
 */
+
+Route::get('/api/clientes/buscar', function (Request $request) {
+    $termino = $request->query('q');
+    $clientes = Cliente::where('nombre', 'like', "%{$termino}%")->take(5)->get();
+    return response()->json($clientes);
+})->middleware('auth');
 
 Route::middleware('auth')->group(function () {
 
@@ -57,6 +67,7 @@ Route::middleware('auth')->group(function () {
     Route::get('st/{id}/reporte', [ServicioTecnicoController::class, 'generarReporte'])->name('st.reporte');
     Route::post('/usuarios', [UserController::class, 'store'])->name('usuarios.store');
     Route::put('/usuarios/{usuario}', [UserController::class, 'update'])->name('usuarios.update');
+    
 
 
     // --- MÓDULO DE REQUISICIONES ---
@@ -65,6 +76,7 @@ Route::middleware('auth')->group(function () {
     Route::resource('st', ServicioTecnicoController::class);
     Route::resource('productos', ProductoController::class);
     Route::resource('familias', App\Http\Controllers\FamiliaController::class)->only(['index', 'store', 'destroy']);
+    Route::resource('clientes', App\Http\Controllers\ClienteController::class);
     
     // Ruta personalizada adicional para avanzar el estado rápidamente
     Route::patch('requisiciones/{requisicion}/avanzar-estado', [RequisicionController::class, 'avanzarStatus'])

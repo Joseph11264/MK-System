@@ -12,34 +12,44 @@ class RequisicionController
     // Reemplaza a tu función consultar()
     public function index(Request $request)
     {
-        $query = Requisicion::with('detalles')->orderBy('created_at', 'desc');
+        $query = \App\Models\Requisicion::query();
 
-        // La función when() de Laravel solo aplica el filtro si el usuario realmente escribió algo
-        $query->when($request->id, function ($q, $id) {
-            return $q->where('id', $id);
-        });
-        
-        $query->when($request->nro_tecnico, function ($q, $nro) {
-            return $q->where('nro_tecnico', 'like', '%' . $nro . '%');
-        });
-        
-        $query->when($request->status, function ($q, $status) {
-            return $q->where('status', $status);
-        });
-        
-        $query->when($request->fecha_inicio, function ($q, $fecha) {
-            return $q->whereDate('created_at', '>=', $fecha);
-        });
-        
-        $query->when($request->fecha_fin, function ($q, $fecha) {
-            return $q->whereDate('created_at', '<=', $fecha);
-        });
+        // 1. FILTROS DE BÚSQUEDA
+        if ($request->filled('id')) {
+            $query->where('id', $request->id);
+        }
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+        if ($request->filled('tipo')) {
+            $query->where('tipo', $request->tipo);
+        }
+        if ($request->filled('tecnico')) {
+            // Buscamos si coincide con el Nro de Técnico o con el Nombre
+            $query->where(function($q) use ($request) {
+                $q->where('nro_tecnico', 'like', '%' . $request->tecnico . '%')
+                  ->orWhere('nombre_tecnico', 'like', '%' . $request->tecnico . '%');
+            });
+        }
+        if ($request->filled('fecha_desde')) {
+            $query->whereDate('created_at', '>=', $request->fecha_desde);
+        }
+        if ($request->filled('fecha_hasta')) {
+            $query->whereDate('created_at', '<=', $request->fecha_hasta);
+        }
 
-        $query->when($request->tipo, function ($q, $tipo) {
-            return $q->where('tipo', $tipo);
-        });
+        // 2. LÓGICA DE ORDENAMIENTO (ASC / DESC)
+        $columnasPermitidas = ['id', 'status', 'tipo', 'created_at'];
+        
+        $sortBy = $request->input('sort_by', 'created_at'); 
+        $sortDir = $request->input('sort_dir', 'desc');
 
-        $requisiciones = $query->paginate(50);
+        if (!in_array($sortBy, $columnasPermitidas)) $sortBy = 'created_at';
+        if (!in_array($sortDir, ['asc', 'desc'])) $sortDir = 'desc';
+
+        // Paginamos los resultados
+        $requisiciones = $query->orderBy($sortBy, $sortDir)->paginate(50);
+
         return view('requisiciones.index', compact('requisiciones'));
     }
 

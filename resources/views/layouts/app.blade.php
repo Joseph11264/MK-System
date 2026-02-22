@@ -101,6 +101,12 @@
                 </li>
                 @endif
 
+                @if(in_array(auth()->user()->rol, ['SuperAdmin', 'Administracion', 'ServicioTecnico']))
+                <li class="nav-item mb-2">
+                    <a class="nav-link text-dark rounded border border-light custom-hover" href="{{ route('clientes.index') }}">👥 Directorio de Clientes</a>
+                </li>
+                 @endif
+
                 @if(in_array(auth()->user()->rol, ['SuperAdmin', 'Administracion']))
                 <li class="nav-item mb-2">
                     <a class="nav-link text-dark rounded border border-light custom-hover" href="{{ route('productos.index') }}">📦 Catálogo de Productos</a>
