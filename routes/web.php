@@ -42,6 +42,7 @@ Route::middleware('auth')->group(function () {
 
     // Servicio Técnico: Todos menos Producción (según tu lógica original)
     Route::middleware('role:SuperAdmin,Administracion,ServicioTecnico,Almacen')->group(function () {
+        Route::patch('st/{id}/avanzar', [ServicioTecnicoController::class, 'avanzarStatus'])->name('st.avanzar');
         Route::resource('st', ServicioTecnicoController::class);
     });
 

@@ -11,4 +11,8 @@ class DetalleRequisicionSt extends Model
     public function requisicionSt() {
         return $this->belongsTo(RequisicionSt::class, 'requisicion_st_id');
     }
+
+    public function productoCatalogo() {
+        return $this->belongsTo(Producto::class, 'codigo_producto', 'codigo_producto');
+    }
 }

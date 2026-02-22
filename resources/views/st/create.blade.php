@@ -28,9 +28,24 @@
             <legend class="float-none w-auto px-2 fw-bold text-primary fs-5">Datos del Cliente y Equipo</legend>
             <div class="row">
                 <div class="col-md-3 mb-3">
-                    <label for="nro_orden_st" class="form-label fw-bold">Nro. Orden ST</label>
-                    <input type="text" class="form-control" name="nro_orden_st" value="{{ old('nro_orden_st') }}" required>
+                    <label class="form-label fw-bold"> Nro. Orden ST</label>
+                    <input type="text" class="form-control text-center fw-bold text-success fs-5" value="{{ $proximoNro }}" disabled>
                 </div>
+
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label fw-bold">Tipo de Servicio </label>
+                        <div class="p-2 border rounded bg-light">
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="tipo_st" id="tipoRep" value="Reparacion" checked>
+                                <label class="form-check-label text-primary fw-bold" for="tipoRep"> Reparación</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="tipo_st" id="tipoGar" value="Garantia">
+                                <label class="form-check-label text-warning fw-bold" for="tipoGar"> Garantía</label>
+                            </div>
+                        </div>
+                    </div>
+
                 <div class="col-md-5 mb-3">
                     <label for="cliente" class="form-label fw-bold">Nombre del Cliente</label>
                     <input type="text" class="form-control" name="cliente" value="{{ old('cliente') }}" required>
@@ -41,17 +56,17 @@
                 </div>
 
                 <div class="col-md-4 mb-3">
-                    <label for="telefono_cliente" class="form-label fw-bold">Teléfono (Opcional)</label>
-                    <input type="text" class="form-control" name="telefono_cliente" value="{{ old('telefono_cliente') }}">
+                    <label for="telefono_cliente" class="form-label fw-bold">Teléfono </label>
+                    <input type="text" class="form-control" name="telefono_cliente" value="{{ old('telefono_cliente') }}" required>
                 </div>
                 <div class="col-md-4 mb-3">
-                    <label for="correo_cliente" class="form-label fw-bold">Correo Electrónico (Opcional)</label>
-                    <input type="email" class="form-control" name="correo_cliente" value="{{ old('correo_cliente') }}">
+                    <label for="correo_cliente" class="form-label fw-bold">Correo Electrónico </label>
+                    <input type="email" class="form-control" name="correo_cliente" value="{{ old('correo_cliente') }}" required>
                 </div>
 
                 <div class="col-md-4 mb-3">
-                    <label for="tecnico_asignado_id" class="form-label fw-bold">Técnico Asignado (Opcional)</label>
-                    <select class="form-select" name="tecnico_asignado_id">
+                    <label for="tecnico_asignado_id" class="form-label fw-bold">Técnico Asignado </label>
+                    <select class="form-select" name="tecnico_asignado_id" required>
                         <option value="">-- Sin Asignar --</option>
                         @foreach($tecnicos as $tecnico)
                             <option value="{{ $tecnico->id }}" {{ old('tecnico_asignado_id') == $tecnico->id ? 'selected' : '' }}>

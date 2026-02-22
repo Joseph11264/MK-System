@@ -50,6 +50,14 @@ E) Reportes y Mantenimiento (22/02/2026)
    - Actualización de .gitignore para excluir caché de fuentes y archivos temporales.
    - Nuevas rutas y vistas para reportes (requisiciones.reporte, st.reporte).
 
+F) Refinamiento de Lógica de Negocio (22/02/2026 - Parte 2)
+   - Servicio Técnico:
+     * Implementación de Tipos: Reparación vs Garantía.
+     * Flujo de Cierre: Validación obligatoria de entrega de materiales y precio antes de completar.
+     * Gestión de Pagos: Registro de referencia de pago y cambio de estado a 'Pagado'.
+   - Requisiciones:
+     * Diferenciación entre 'Requisición' (Salida) y 'Devolución' (Entrada).
+
 4. NOTAS DE DESPLIEGUE
 ----------------------
 - Asegurarse de ejecutar las migraciones si hay cambios en la BD.

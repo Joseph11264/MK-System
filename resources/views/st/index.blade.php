@@ -17,6 +17,7 @@
                 <tr>
                     <th>ID</th>
                     <th>Nro Orden</th>
+                    <th>Tipo</th>
                     <th>Cliente</th>
                     <th>Equipo</th>
                     <th>Técnico Asignado</th>
@@ -33,6 +34,15 @@
                     <tr class="{{ $statusClass }}">
                         <td class="fw-bold">{{ $ticket->id }}</td>
                         <td class="fw-bold text-primary">{{ $ticket->nro_orden_st }}</td>
+
+                        <td class="fw-bold fs-6">
+                            @if($ticket->tipo_st === 'Garantia')
+                                <span class="badge bg-warning text-dark" style="font-size: 0.75em;"> Garantía</span>
+                            @else
+                                <span class="badge bg-primary" style="font-size: 0.75em;"> Reparación</span>
+                            @endif
+                        </td>
+
                         <td>
                             {{ $ticket->cliente }}<br>
                             @if($ticket->telefono_cliente)
@@ -50,11 +60,26 @@
                         <td>{{ $ticket->created_at->format('Y-m-d') }}</td>
                         <td><span class="badge border border-dark text-dark fs-6">{{ $ticket->status }}</span></td>
                         <td>
-                            <a href="{{ route('st.show', $ticket->id) }}" class="text-primary text-decoration-none d-block fw-bold mb-1">🔎 Ver</a>
-                            @if($ticket->status === 'Pendiente')
-                                <a href="{{ route('st.edit', $ticket->id) }}" class="text-danger text-decoration-none d-block mt-1" style="font-size: 0.9em;">✏️ Editar</a>
+                        @if($ticket->status === 'Pendiente')
+                            @if($ticket->materiales_entregados && $ticket->precio_reparacion > 0)
+                                <form action="{{ route('st.avanzar', $ticket->id) }}" method="POST" class="m-0 p-0 mb-1" onsubmit="return confirm('¿Seguro que deseas marcar como Completado?');">
+                                    @csrf @method('PATCH')
+                                    <button type="submit" class="btn btn-link text-success text-decoration-none fw-bold p-0" style="font-size: 0.9em; box-shadow: none;">
+                                        📝 Completar ST
+                                    </button>
+                                </form>
+                            @else
+                                <span class="d-block mb-1 text-muted" style="font-size: 0.8em; cursor: not-allowed;" title="Entrega los materiales en 'Ver' para completar">
+                                    🔒 Completar (Falta material)
+                                </span>
                             @endif
-                        </td>
+                        @endif
+
+                        <a href="{{ route('st.show', $ticket->id) }}" class="text-primary text-decoration-none d-block fw-bold mb-1" style="font-size: 0.9em;">🔎 Ver</a>
+                        @if($ticket->status === 'Pendiente')
+                            <a href="{{ route('st.edit', $ticket->id) }}" class="text-danger text-decoration-none d-block mt-1" style="font-size: 0.9em;">✏️ Editar</a>
+                        @endif
+                    </td>
                     </tr>
                 @empty
                     <tr>
