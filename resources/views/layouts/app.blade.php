@@ -59,7 +59,7 @@
                         @endif
 
                         @if($totalNotif == 0)
-                            <li><span class="dropdown-item text-muted py-3 text-center">¡Todo al día! No hay tareas pendientes 🎉</span></li>
+                            <li><span class="dropdown-item text-muted py-3 text-center">¡Todo al día! No hay tareas pendientes </span></li>
                         @endif
                     </ul>
                 </li>
@@ -104,6 +104,12 @@
                 @if(in_array(auth()->user()->rol, ['SuperAdmin', 'Administracion']))
                 <li class="nav-item mb-2">
                     <a class="nav-link text-dark rounded border border-light custom-hover" href="{{ route('productos.index') }}">📦 Catálogo de Productos</a>
+                </li>
+                @endif
+
+                @if(in_array(auth()->user()->rol, ['SuperAdmin', 'Administracion']))
+                <li class="nav-item mb-2">
+                    <a class="nav-link text-dark rounded border border-light custom-hover" href="{{ route('familias.index') }}">🏷️ Gestionar Familias</a>
                 </li>
                 @endif
                 

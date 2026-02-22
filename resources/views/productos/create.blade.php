@@ -30,8 +30,12 @@
 
                     <div class="col-md-6 mb-4">
                         <label class="form-label fw-bold">Familia / Categoría</label>
-                        <input type="text" name="familia" class="form-control" value="{{ old('familia') }}" placeholder="Ej: Pantallas, Baterías, Flex...">
-                        <small class="text-muted">Agrupa tus productos para filtrarlos más fácil.</small>
+                        <select name="familia_id" class="form-select">
+                            <option value="">-- Sin Familia --</option>
+                            @foreach($familias as $fam)
+                                <option value="{{ $fam->id }}">{{ $fam->nombre }}</option>
+                            @endforeach
+                        </select>
                     </div>
 
                     <div class="col-md-6 mb-4">

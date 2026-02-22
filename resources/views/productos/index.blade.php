@@ -22,10 +22,10 @@
                 </div>
                 <div class="col-md-3">
                     <label class="form-label fw-bold">Filtrar por Familia</label>
-                    <select name="familia" class="form-select">
-                        <option value="">-- Todas las Familias --</option>
+                    <select name="familia_id" class="form-select">
+                        <option value="">-- Todas --</option>
                         @foreach($familias as $fam)
-                            <option value="{{ $fam }}" {{ request('familia') == $fam ? 'selected' : '' }}>{{ $fam }}</option>
+                            <option value="{{ $fam->id }}" {{ request('familia_id') == $fam->id ? 'selected' : '' }}>{{ $fam->nombre }}</option>
                         @endforeach
                     </select>
                 </div>
@@ -63,7 +63,7 @@
                         <td>{{ $producto->descripcion }}</td>
                         <td>
                             @if($producto->familia)
-                                <span class="badge bg-info text-dark">{{ $producto->familia }}</span>
+                                <span class="badge bg-info text-dark">{{ $producto->familia->nombre ?? '-' }}</span>
                             @else
                                 <span class="text-muted">-</span>
                             @endif

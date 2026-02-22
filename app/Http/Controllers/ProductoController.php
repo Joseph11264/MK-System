@@ -6,57 +6,52 @@ use App\Models\Producto;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
-class ProductoController extends Controller
+class ProductoController
 {
     public function index(Request $request)
     {
-        $query = Producto::query();
+        $query = Producto::with('familia'); // Cargamos la relación
 
-        // FILTROS
         if ($request->filled('codigo')) {
             $query->where('codigo_producto', 'like', '%' . $request->codigo . '%');
         }
         if ($request->filled('nombre')) {
             $query->where('descripcion', 'like', '%' . $request->nombre . '%');
         }
-        if ($request->filled('familia')) {
-            $query->where('familia', $request->familia);
+        if ($request->filled('familia_id')) { // Filtramos por ID
+            $query->where('familia_id', $request->familia_id);
         }
 
         $productos = $query->orderBy('descripcion', 'asc')->paginate(20);
-        
-        // Obtenemos las familias únicas para el select del filtro
-        $familias = Producto::whereNotNull('familia')->distinct()->pluck('familia');
+        $familias = \App\Models\Familia::orderBy('nombre', 'asc')->get();
 
         return view('productos.index', compact('productos', 'familias'));
     }
 
     public function create()
     {
-        return view('productos.create');
+        $familias = \App\Models\Familia::orderBy('nombre', 'asc')->get();
+        return view('productos.create', compact('familias'));
     }
 
     public function store(Request $request)
     {
-        // VALIDACIÓN DE CÓDIGO ÚNICO
         $request->validate([
             'codigo_producto' => 'required|string|unique:productos,codigo_producto',
             'descripcion' => 'required|string|max:255',
-            'familia' => 'nullable|string|max:100',
-            'imagen' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048' // Max 2MB
+            'familia_id' => 'nullable|exists:familias,id',
+            'imagen' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048'
         ], [
-            'codigo_producto.unique' => '⚠️ Este código de producto ya existe en el sistema.'
+            'codigo_producto.unique' => '⚠️ Este código de producto ya existe.'
         ]);
 
         $datos = $request->all();
-
-        // PROCESAR IMAGEN
         if ($request->hasFile('imagen')) {
             $datos['imagen'] = $request->file('imagen')->store('productos', 'public');
         }
 
         Producto::create($datos);
-        return redirect()->route('productos.index')->with('success', 'Producto registrado con éxito.');
+        return redirect()->route('productos.index')->with('success', 'Producto registrado.');
     }
 
     // Método para eliminar

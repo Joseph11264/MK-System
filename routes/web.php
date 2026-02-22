@@ -64,6 +64,7 @@ Route::middleware('auth')->group(function () {
     Route::resource('requisiciones', RequisicionController::class);
     Route::resource('st', ServicioTecnicoController::class);
     Route::resource('productos', ProductoController::class);
+    Route::resource('familias', App\Http\Controllers\FamiliaController::class)->only(['index', 'store', 'destroy']);
     
     // Ruta personalizada adicional para avanzar el estado rápidamente
     Route::patch('requisiciones/{requisicion}/avanzar-estado', [RequisicionController::class, 'avanzarStatus'])
