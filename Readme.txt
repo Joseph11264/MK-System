@@ -58,6 +58,13 @@ F) Refinamiento de Lógica de Negocio (22/02/2026 - Parte 2)
    - Requisiciones:
      * Diferenciación entre 'Requisición' (Salida) y 'Devolución' (Entrada).
 
+G) Panel de Control y Notificaciones (22/02/2026 - Parte 3)
+   - Dashboard:
+     * Nuevo DashboardController y vista principal con KPIs (Tarjetas de resumen).
+     * Integración de gráficas estadísticas (Chart.js) para monitorear tickets y requisiciones.
+   - Correos:
+     * Clase 'TicketCompletadoMail' para envío automático de reportes PDF al finalizar un servicio.
+
 4. NOTAS DE DESPLIEGUE
 ----------------------
 - Asegurarse de ejecutar las migraciones si hay cambios en la BD.

@@ -8,6 +8,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\TicketCompletadoMail;
 
 class ServicioTecnicoController
 {
@@ -194,21 +196,20 @@ class ServicioTecnicoController
             return redirect()->route('st.index')->with('success', 'Ticket ST actualizado.');
         }
     }
+    
         public function avanzarStatus(Request $request, $id)
-        {
-        $ticket = RequisicionSt::findOrFail($id);
+    {
+        $ticket = RequisicionSt::with('detalles.productoCatalogo')->findOrFail($id);
         
         if (!$ticket->materiales_entregados) {
             return back()->with('error', '⚠️ Debes entregar los materiales antes de completar el servicio.');
         }
 
-        // Si es Reparación, exigimos el precio
         if ($ticket->tipo_st === 'Reparacion') {
             if (empty($ticket->precio_reparacion) || $ticket->precio_reparacion <= 0) {
                 return back()->with('error', '⚠️ Las Reparaciones requieren establecer un Precio antes de completarse.');
             }
         } else {
-            // Si es Garantía, forzamos el precio a 0 y lo autoliquidamos
             $ticket->precio_reparacion = 0;
             $ticket->estado_pago = 'Pagado';
             $ticket->referencia_pago = 'Garantía (Sin Costo)';
@@ -217,7 +218,28 @@ class ServicioTecnicoController
         $ticket->status = 'Completado';
         $ticket->save();
 
-        return back()->with('success', '✅ Servicio Técnico finalizado correctamente.');
+        // ==========================================
+        // LÓGICA DE ENVÍO DE CORREO AUTOMÁTICO
+        // ==========================================
+        if (!empty($ticket->correo_cliente)) {
+            try {
+                // 1. Generamos el PDF "al vuelo" (en memoria)
+                $pdf = Pdf::loadView('st.reporte', compact('ticket'));
+                
+                // 2. Intentamos enviar el correo
+                Mail::to($ticket->correo_cliente)->send(new TicketCompletadoMail($ticket, $pdf->output()));
+                
+                $mensajeCorreo = ' y el comprobante PDF fue enviado al cliente.';
+            } catch (\Exception $e) {
+                // Si falla (por estar en local o sin internet), no se cae el sistema.
+                \Log::error('Error enviando PDF al cliente: ' . $e->getMessage());
+                $mensajeCorreo = ', pero el correo no pudo ser enviado (Modo Local).';
+            }
+        } else {
+            $mensajeCorreo = ' (El cliente no registró correo electrónico).';
+        }
+
+        return back()->with('success', '✅ Servicio Técnico finalizado' . $mensajeCorreo);
     }
 
      

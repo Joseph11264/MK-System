@@ -5,6 +5,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\RequisicionController;
 use App\Http\Controllers\ServicioTecnicoController;
 use App\Http\Controllers\ProductoController;
+use App\Http\Controllers\DashboardController;
 
 /*
 |--------------------------------------------------------------------------
@@ -50,6 +51,7 @@ Route::middleware('auth')->group(function () {
     Route::resource('requisiciones', RequisicionController::class);
     
     // --- MÓDULO DE USUARIOS ---
+    Route::get('/', [DashboardController::class, 'index'])->middleware('auth')->name('dashboard');
     Route::get('/usuarios', [UserController::class, 'index'])->name('usuarios.index');
     Route::get('requisiciones/{id}/reporte', [RequisicionController::class, 'generarReporte'])->name('requisiciones.reporte');
     Route::get('st/{id}/reporte', [ServicioTecnicoController::class, 'generarReporte'])->name('st.reporte');

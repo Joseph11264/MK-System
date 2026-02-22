@@ -5,5 +5,11 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 
 class Producto extends Model {
-    protected $fillable = ['codigo_producto', 'descripcion', 'activo'];
+    protected $fillable = [
+        'codigo_producto',
+        'descripcion',
+        'familia',
+        'imagen',
+        'activo'
+    ];
 }
