@@ -104,7 +104,8 @@ class ProductoController
         // Validamos asegurándonos de que el código no se repita con OTRO producto,
         // pero ignorando el ID del producto actual para que no dé error consigo mismo.
         $request->validate([
-            'codigo_producto' => ['required', 'string', 'regex:/^\d{6}[A-Za-z]?$/', 'unique:productos,codigo_producto'],
+            // LA MAGIA OCURRE AQUÍ: Añadimos la excepción del ID actual
+            'codigo_producto' => ['required', 'string', 'regex:/^\d{6}[A-Za-z]?$/', 'unique:productos,codigo_producto,' . $id],
             'descripcion' => 'required|string|max:255',
             'familia_id' => 'nullable|exists:familias,id',
             // Añadimos las reglas estrictas de formato y peso (2048 KB = 2MB)

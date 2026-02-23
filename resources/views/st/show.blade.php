@@ -181,7 +181,13 @@
                     <p class="mb-2"><strong>Fecha de Ingreso:</strong> {{ $ticket->created_at->format('Y-m-d H:i') }}</p>
                     <div class="d-flex align-items-center gap-2">
                         <strong>Estado:</strong>
-                        <span class="badge border border-dark text-dark fs-6 status-{{ strtolower(str_replace(' ', '-', $ticket->status)) }}">
+                        @php
+                            $badgeColor = 'bg-secondary'; // Gris por defecto para Cancelado
+                            if($ticket->status === 'Pendiente') $badgeColor = 'bg-danger text-white'; // Rojo
+                            elseif($ticket->status === 'En Curso') $badgeColor = 'bg-warning text-dark'; // Amarillo
+                            elseif($ticket->status === 'Completado') $badgeColor = 'bg-success text-white'; // Verde
+                        @endphp
+                        <span class="badge {{ $badgeColor }} fs-6 shadow-sm border border-light border-opacity-10">
                             {{ $ticket->status }}
                         </span>
                     </div>

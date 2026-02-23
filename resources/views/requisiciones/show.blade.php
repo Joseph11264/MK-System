@@ -37,9 +37,20 @@
                     @php
                         $statusClass = 'status-' . strtolower(str_replace(' ', '-', $requisicion->status));
                     @endphp
-                    <span class="badge border text-dark {{ $statusClass }} px-3 py-2 fs-6">
-                        {{ $requisicion->status }}
-                    </span>
+
+                    @php
+                            $badgeColor = 'bg-secondary text-white'; // Gris por defecto para Cancelado
+                            if($requisicion->status === 'Pendiente') {
+                                $badgeColor = 'bg-danger text-white'; // Rojo
+                            } elseif($requisicion->status === 'En Curso') {
+                                $badgeColor = 'bg-warning text-dark'; // Amarillo
+                            } elseif(in_array($requisicion->status, ['Completado', 'Entregado'])) {
+                                $badgeColor = 'bg-success text-white'; // Verde
+                            }
+                    @endphp
+                        <span class="badge {{ $badgeColor }} fs-6 px-3 py-2 shadow-sm border border-light border-opacity-10">
+                            {{ $requisicion->status }}
+                        </span>
                 </p>
             </div>
         </div>

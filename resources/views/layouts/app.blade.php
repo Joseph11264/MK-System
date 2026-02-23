@@ -16,11 +16,15 @@
 
     <header class="main-header d-flex justify-content-between align-items-center p-2 text-white shadow" style="background: linear-gradient(90deg, #153b75 0%, #0056b3 100%);">
         
+        <button class="btn btn-outline-light d-md-none me-3 border-0 fs-3 p-0" id="btnToggleSidebar">
+                ☰
+        </button>
+
         <a href="{{ route('dashboard') }}" class="text-decoration-none d-flex align-items-center ms-3">
             <div class="bg-body rounded-circle d-flex justify-content-center align-items-center shadow-sm" style="width: 48px; height: 48px;">
                 <img src="{{ asset('img/logo.jpg') }}" alt="Logo MK" style="max-height: 35px; object-fit: contain;">
             </div>
-            <span class="ms-3 fw-bold text-white fs-4 tracking-tight">SISTEMA MK</span>
+            <span class="ms-3 fw-bold text-white fs-4 tracking-tight d-none d-sm-block">SISTEMA MK</span>
         </a>
 
         @php
@@ -243,6 +247,22 @@
         document.getElementById('iconoTema').innerText = nuevoTema === 'dark' ? '☀️' : '🌙';
         localStorage.setItem('tema-mk', nuevoTema);
     }
+
+    document.getElementById('btnToggleSidebar')?.addEventListener('click', function(e) {
+            e.preventDefault(); // Evita que la página salte
+            document.querySelector('.main-nav-sidebar').classList.toggle('mobile-show');
+        });
+
+        // Opcional: Cerrar el menú si tocas cualquier parte del fondo (en móviles)
+        document.querySelector('.main-content-wrapper').addEventListener('click', function() {
+            const sidebar = document.querySelector('.main-nav-sidebar');
+            if(window.innerWidth <= 768 && sidebar.classList.contains('mobile-show')) {
+                sidebar.classList.remove('mobile-show');
+            }
+        });
+
+        
+
     </script>   
     
     <style>
@@ -250,6 +270,136 @@
             background-color: var(--bs-tertiary-bg);
             color: #0056b3 !important;
             font-weight: 500;
+        }
+
+        /* ==========================================================
+           MEJORAS PARA MODO OSCURO (SIN PROBLEMAS DE CACHÉ)
+           ========================================================== */
+        [data-bs-theme="dark"] {
+            /* 1. Fondo principal de la pantalla (casi negro mate) */
+            --bs-body-bg: #101010 !important;
+            --bs-body-tertiary-bg: #101010 !important;
+            
+            /* 2. Superficies y Tarjetas (gris oscuro para elevar) */
+            --bs-secondary-bg: #1e1e1e !important;
+            --bs-card-bg: #1e1e1e !important;
+            
+            /* 3. Textos y bordes */
+            --bs-body-color: #e0e0e0 !important;
+            --bs-border-color: #333333 !important;
+        }
+
+        /* 4. Forzar fondos que usan clases blancas por defecto */
+        [data-bs-theme="dark"] .bg-white,
+        [data-bs-theme="dark"] .bg-light {
+            background-color: #1e1e1e !important;
+            color: #e0e0e0 !important;
+        }
+
+        /* 5. ARREGLO DE LA CABECERA AZUL, BLANCA Y SECUNDARIA */
+        [data-bs-theme="dark"] .table-primary th {
+            background-color: #1a222b !important; /* Tono gris-azulado */
+            color: #e0e0e0 !important;
+            border-bottom: 2px solid #2c3e50 !important;
+        }
+        
+        [data-bs-theme="dark"] .table-light th,
+        [data-bs-theme="dark"] thead.table-light th,
+        [data-bs-theme="dark"] .table-secondary th,
+        [data-bs-theme="dark"] thead.table-secondary th {
+            background-color: #24282c !important; /* Gris oscuro elegante, adiós al blanco */
+            color: #e0e0e0 !important;
+            border-bottom: 2px solid #373b3e !important;
+        }
+
+        /* 6. Fondo general de las filas de la tabla */
+        [data-bs-theme="dark"] .table,
+        [data-bs-theme="dark"] table tbody tr td {
+            background-color: #1e1e1e !important; /* Mismo color de las tarjetas */
+            color: #d1d1d1 !important;
+            border-color: #333 !important;
+        }
+
+        /* 6. Fondo general de las filas de la tabla */
+        [data-bs-theme="dark"] .table {
+            --bs-table-bg: #1e1e1e; /* Mismo color de las tarjetas (gris claro) */
+            --bs-table-color: #d1d1d1;
+            border-color: #333 !important;
+        }
+
+        /* 7. Arreglo para los Inputs y Selects */
+        [data-bs-theme="dark"] .form-control, 
+        [data-bs-theme="dark"] .form-select {
+            background-color: #24282c !important; 
+            border-color: #373b3e !important;
+            color: #e0e0e0 !important;
+        }
+        [data-bs-theme="dark"] .form-control:focus, 
+        [data-bs-theme="dark"] .form-select:focus {
+            background-color: #2b3035 !important;
+            border-color: #0d6efd !important;
+        }
+
+        /* 8. ESTADOS TRANSLÚCIDOS DE LA TABLA (MODO NOCHE) */
+        [data-bs-theme="dark"] tr.status-pendiente td,
+        [data-bs-theme="dark"] .status-pendiente td {
+            background-color: rgba(220, 53, 69, 0.15) !important; 
+            color: #ffb3b8 !important; 
+        }
+
+        [data-bs-theme="dark"] tr.status-en-curso td,
+        [data-bs-theme="dark"] .status-en-curso td {
+            background-color: rgba(253, 126, 20, 0.15) !important; 
+            color: #ffdf80 !important; 
+        }
+
+        [data-bs-theme="dark"] tr.status-completado td,
+        [data-bs-theme="dark"] .status-completado td {
+            background-color: rgba(40, 167, 69, 0.15) !important; 
+            color: #a3e4b7 !important; 
+        }
+
+        /* ==========================================================
+           RESPONSIVIDAD PARA MÓVILES (SMARTPHONES Y TABLETS)
+           ========================================================== */
+        @media (max-width: 768px) {
+            /* 1. ARREGLAR LA CABECERA (Evitar que el texto empuje la pantalla) */
+            .main-header {
+                flex-wrap: nowrap;
+            }
+            .main-header .tracking-tight {
+                display: none !important; /* Oculta "SISTEMA MK" para que quepan los botones */
+            }
+            .main-header .text-end.lh-sm {
+                display: none !important; /* Oculta tu nombre de usuario */
+            }
+            .main-header .badge {
+                display: none !important; /* Oculta el rol (SuperAdmin) */
+            }
+
+            /* 2. EL MENÚ LATERAL (Hacerlo flotante para que no ocupe espacio físico) */
+            .main-nav-sidebar {
+                position: fixed !important; /* Mágico: lo saca de la cuadrícula */
+                top: 64px !important; /* Lo pone justo debajo de la cabecera */
+                left: 0 !important;
+                height: calc(100vh - 64px) !important;
+                transform: translateX(-100%);
+                transition: transform 0.3s ease-in-out;
+                z-index: 1050 !important;
+                background-color: var(--bs-body-bg) !important; 
+            }
+            
+            .main-nav-sidebar.mobile-show {
+                transform: translateX(0);
+                box-shadow: 10px 0 20px rgba(0,0,0,0.8) !important; 
+            }
+
+            /* 3. EL CONTENIDO PRINCIPAL (Quitar el hueco negro a la izquierda) */
+            .main-content-wrapper {
+                margin-left: 0 !important;
+                width: 100vw !important; /* Toma exactamente el 100% de la pantalla */
+                padding: 15px !important; 
+            }
         }
     </style>
 </body>

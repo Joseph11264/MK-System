@@ -203,9 +203,7 @@ class ServicioTecnicoController
 
         // 5. FLUJO: Edición de Revisión y Repuestos (Desde el botón "Realizar Revisión")
         if ($request->has('actualizar_ticket')) {
-            if ($validated['status'] === 'Completado' && !in_array(auth()->user()->rol, ['SuperAdmin', 'Administracion'])) {
-                abort(403, 'Acceso denegado. Solo Administración puede marcar un ticket ST como Completado.');
-            }
+            
             $validated = $request->validate([
                 'cliente' => 'required|string',
                 'codigo_equipo' => 'required|string', 

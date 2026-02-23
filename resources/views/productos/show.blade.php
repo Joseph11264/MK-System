@@ -45,7 +45,13 @@
                             @forelse($salidasST as $salida)
                                 <tr>
                                     <td class="fw-bold"><a href="{{ route('st.show', $salida->requisicionSt->id) }}" target="_blank">#{{ $salida->requisicionSt->nro_orden_st }}</a></td>
-                                    <td>{{ $salida->created_at ? $salida->created_at->format('d/m/Y') : 'Fecha desconocida' }}</td>
+                                    <td class="align-middle text-center">
+                                        @if($salida->requisicionSt)
+                                            {{ $salida->requisicionSt->created_at->format('d/m/Y - h:i A') }}
+                                        @else
+                                            <span class="text-muted">Fecha desconocida</span>
+                                        @endif
+                                    </td>
                                     <td class="text-center fw-bold text-danger">-{{ $salida->cantidad }}</td>
                                     <td>
                                         <span class="badge bg-{{ $salida->requisicionSt->status == 'Completado' ? 'success' : ($salida->requisicionSt->status == 'Cancelado' ? 'danger' : 'secondary') }}">
@@ -81,7 +87,13 @@
                             @forelse($salidasAlmacen as $salida)
                                 <tr>
                                     <td class="fw-bold"><a href="{{ route('requisiciones.show', $salida->requisicion->id) }}" target="_blank">#{{ $salida->requisicion->id }}</a></td>
-                                    <td>{{ $salida->created_at ? $salida->created_at->format('d/m/Y') : 'Fecha desconocida' }}</td>
+                                    <td class="align-middle text-center">
+                                        @if($salida->requisicion)
+                                            {{ $salida->requisicion->created_at->format('d/m/Y - h:i A') }}
+                                        @else
+                                            <span class="text-muted">Fecha desconocida</span>
+                                        @endif
+                                    </td>
                                     <td class="text-center fw-bold text-danger">-{{ $salida->cantidad }}</td>
                                     <td>
                                         <span class="badge bg-{{ $salida->requisicion->status == 'Entregado' ? 'success' : ($salida->requisicion->status == 'Cancelado' ? 'danger' : 'secondary') }}">

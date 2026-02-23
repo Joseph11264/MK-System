@@ -1,107 +1,137 @@
 @extends('layouts.app')
 
-@section('titulo', 'Panel Principal')
+@section('titulo', 'Panel de Control')
 
 @section('content')
 <section class="main-content-wrapper">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 class="text-primary m-0">📊 Panel de Control General</h2>
-        <span class="text-muted fw-bold">{{ date('d M Y, h:i A') }}</span>
-    </div>
 
-    <div class="row mb-4">
-        <div class="col-md-3 mb-3">
-            <div class="card bg-primary text-white shadow-sm h-100 border-0">
-                <div class="card-body">
-                    <h6 class="text-uppercase fw-bold text-light opacity-75">Req. Pendientes</h6>
-                    <h2 class="display-5 fw-bold mb-0">{{ $kpis['req_pendientes'] }}</h2>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3 mb-3">
-            <div class="card bg-warning text-dark shadow-sm h-100 border-0">
-                <div class="card-body">
-                    <h6 class="text-uppercase fw-bold opacity-75">Tickets ST Pendientes</h6>
-                    <h2 class="display-5 fw-bold mb-0">{{ $kpis['st_pendientes'] }}</h2>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3 mb-3">
-            <div class="card bg-success text-white shadow-sm h-100 border-0">
-                <div class="card-body">
-                    <h6 class="text-uppercase fw-bold text-light opacity-75">Trabajos Completados</h6>
-                    <h2 class="display-5 fw-bold mb-0">{{ $kpis['req_completadas'] + $kpis['st_completados'] }}</h2>
-                </div>
-            </div>
-        </div>
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-center mb-4">
+        <h2 class="text-primary m-0 mb-3 mb-md-0">📊 Panel de Rendimiento</h2>
+        
+        <form action="{{ url()->current() }}" method="GET" class="d-flex gap-2 shadow-sm p-2 bg-body rounded border border-secondary border-opacity-25">
+            <select name="mes" class="form-select fw-bold border-0 bg-transparent">
+                @foreach($nombresMeses as $num => $nombre)
+                    <option value="{{ $num }}" {{ $mes == $num ? 'selected' : '' }}>{{ $nombre }}</option>
+                @endforeach
+            </select>
+            
+            <select name="anio" class="form-select fw-bold border-0 bg-transparent">
+                @for($i = date('Y'); $i >= 2024; $i--)
+                    <option value="{{ $i }}" {{ $anio == $i ? 'selected' : '' }}>{{ $i }}</option>
+                @endfor
+            </select>
+            
+            <button type="submit" class="btn btn-primary fw-bold px-3">Consultar</button>
+        </form>
     </div>
 
     <div class="row">
         <div class="col-md-6 mb-4">
-            <div class="card shadow-sm border-0 h-100">
-                <div class="card-header bg-white fw-bold text-secondary border-bottom-0 pt-3">
-                    🔧 Resumen de Servicio Técnico (ST)
+            <div class="card shadow-sm h-100 border-0">
+                <div class="card-header bg-primary text-white fw-bold">
+                    🔧 Servicio Técnico ({{ $nombresMeses[$mes] }} {{ $anio }})
                 </div>
-                <div class="card-body">
-                    <canvas id="stChart" height="250"></canvas>
+                <div class="card-body bg-body d-flex flex-column align-items-center justify-content-center">
+                    @if($stPendientes == 0 && $stCompletados == 0 && $stCancelados == 0)
+                        <p class="text-muted fs-5 my-5">No hay registros de ST en este mes.</p>
+                    @else
+                        <div style="position: relative; height: 300px; width: 100%;">
+                            <canvas id="graficaST"></canvas>
+                        </div>
+                    @endif
                 </div>
             </div>
         </div>
 
         <div class="col-md-6 mb-4">
-            <div class="card shadow-sm border-0 h-100">
-                <div class="card-header bg-white fw-bold text-secondary border-bottom-0 pt-3">
-                    📦 Resumen de Requisiciones / Almacén
+            <div class="card shadow-sm h-100 border-0">
+                <div class="card-header bg-success text-white fw-bold">
+                    📦 Requisiciones de Producción ({{ $nombresMeses[$mes] }} {{ $anio }})
                 </div>
-                <div class="card-body">
-                    <canvas id="reqChart" height="250"></canvas>
+                <div class="card-body bg-body d-flex flex-column align-items-center justify-content-center">
+                    @if($reqPendientes == 0 && $reqEnCurso == 0 && $reqCompletados == 0 && $reqCancelados == 0)
+                        <p class="text-muted fs-5 my-5">No hay requisiciones en este mes.</p>
+                    @else
+                        <div style="position: relative; height: 300px; width: 100%;">
+                            <canvas id="graficaReq"></canvas>
+                        </div>
+                    @endif
                 </div>
             </div>
         </div>
     </div>
+
 </section>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <script>
-    document.addEventListener("DOMContentLoaded", function() {
-        // Datos inyectados desde Laravel
-        const dataST = @json($chartData['st']);
-        const dataReq = @json($chartData['req']);
+    document.addEventListener('DOMContentLoaded', function () {
+        
+        // Colores consistentes con tus estados
+        const colorPendiente = '#dc3545'; // Rojo
+        const colorEnCurso = '#fd7e14';   // Naranja
+        const colorCompletado = '#198754'; // Verde (Corregido el nombre de variable)
+        const colorCancelado = '#6c757d'; // Gris
 
-        // 1. Gráfica de ST (Torta / Pie)
-        new Chart(document.getElementById('stChart'), {
-            type: 'doughnut',
-            data: {
-                labels: ['Pendientes', 'Completados', 'Cancelados'],
-                datasets: [{
-                    data: dataST,
-                    backgroundColor: ['#ffc107', '#198754', '#dc3545'],
-                    borderWidth: 0
-                }]
-            },
-            options: { responsive: true, maintainAspectRatio: false }
-        });
+        // ==========================================
+        // 1. INICIALIZAR GRÁFICA SERVICIO TÉCNICO
+        // ==========================================
+        const ctxST = document.getElementById('graficaST');
+        if (ctxST) {
+            new Chart(ctxST, {
+                type: 'doughnut', 
+                data: {
+                    labels: ['Pendientes', 'Completados', 'Cancelados'],
+                    datasets: [{
+                        data: [{{ $stPendientes }}, {{ $stCompletados }}, {{ $stCancelados }}],
+                        backgroundColor: [colorPendiente, colorCompletado, colorCancelado],
+                        borderWidth: 2,
+                        hoverOffset: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'bottom' }
+                    }
+                }
+            });
+        }
 
-        // 2. Gráfica de Requisiciones (Barras)
-        new Chart(document.getElementById('reqChart'), {
-            type: 'bar',
-            data: {
-                labels: ['Pendientes', 'En Curso', 'Completadas', 'Canceladas'],
-                datasets: [{
-                    label: 'Cantidad de Órdenes',
-                    data: dataReq,
-                    backgroundColor: ['#0d6efd', '#0dcaf0', '#198754', '#dc3545'],
-                    borderRadius: 5
-                }]
-            },
-            options: { 
-                responsive: true, 
-                maintainAspectRatio: false,
-                plugins: { legend: { display: false } },
-                scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } }
-            }
-        });
+        // ==========================================
+        // 2. INICIALIZAR GRÁFICA REQUISICIONES
+        // ==========================================
+        const ctxReq = document.getElementById('graficaReq');
+        if (ctxReq) {
+            new Chart(ctxReq, {
+                type: 'bar', 
+                data: {
+                    labels: ['Pendientes', 'En Curso', 'Completadas', 'Canceladas'], // Corregido el Label
+                    datasets: [{
+                        label: 'Cantidad de Requisiciones',
+                        data: [{{ $reqPendientes }}, {{ $reqEnCurso }}, {{ $reqCompletados }}, {{ $reqCancelados }}], // Corregida la variable
+                        backgroundColor: [colorPendiente, colorEnCurso, colorCompletado, colorCancelado], // Corregido el color
+                        borderRadius: 5, 
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false } 
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: { precision: 0 } 
+                        }
+                    }
+                }
+            });
+        }
     });
 </script>
 @endsection

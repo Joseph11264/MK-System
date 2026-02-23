@@ -194,7 +194,7 @@ class RequisicionController
             abort(403, 'Acceso denegado. Solo Almacén o Administración pueden avanzar el estado de las requisiciones.');
         }
 
-        if (auth()->user()->rol === 'Almacen' && $requisicion->status === 'En Curso') { 
+        if (auth()->user()->rol === ['Administracion', 'SuperAdmin'] && $requisicion->status === 'En Curso') { 
             abort(403, 'Acceso denegado. Solo Administración puede preparar (avanzar a En Curso).');
         }
         

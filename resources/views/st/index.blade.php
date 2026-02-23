@@ -53,25 +53,27 @@
                     </div>
                 </div>
                 
-                <div class="d-flex justify-content-between align-items-center mt-3 border-top pt-3">
-                    <div class="d-flex align-items-center gap-2">
-                        <span class="fw-bold text-muted me-2"><i class="text-primary fs-5">🔃</i> Ordenar por:</span>
-                        <select name="sort_by" class="form-select form-select-sm shadow-sm" style="width: auto;">
+                <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mt-3 border-top pt-3 gap-3">
+                    <div class="d-flex flex-wrap align-items-center gap-2">
+                        <span class="fw-bold text-muted w-100 w-sm-auto mb-1 mb-sm-0">
+                            <i class="text-primary fs-5">🔃</i> Ordenar por:
+                        </span>
+                        <select name="sort_by" class="form-select form-select-sm shadow-sm flex-grow-1 flex-sm-grow-0" style="min-width: 140px; width: auto;">
                             <option value="created_at" {{ request('sort_by') == 'created_at' ? 'selected' : '' }}>Fecha de Ingreso</option>
                             <option value="nro_orden_st" {{ request('sort_by') == 'nro_orden_st' ? 'selected' : '' }}>Número de Orden</option>
                             <option value="cliente" {{ request('sort_by') == 'cliente' ? 'selected' : '' }}>Nombre del Cliente</option>
                             <option value="status" {{ request('sort_by') == 'status' ? 'selected' : '' }}>Estado del Ticket</option>
                             <option value="tipo_st" {{ request('sort_by') == 'tipo_st' ? 'selected' : '' }}>Tipo de Servicio</option>
                         </select>
-                        <select name="sort_dir" class="form-select form-select-sm shadow-sm" style="width: auto;">
+                        <select name="sort_dir" class="form-select form-select-sm shadow-sm flex-grow-1 flex-sm-grow-0" style="min-width: 140px; width: auto;">
                             <option value="desc" {{ request('sort_dir') == 'desc' ? 'selected' : '' }}>Descendente (Más reciente / Z-A)</option>
                             <option value="asc" {{ request('sort_dir') == 'asc' ? 'selected' : '' }}>Ascendente (Más antiguo / A-Z)</option>
                         </select>
                     </div>
                     
-                    <div>
-                        <a href="{{ route('st.index') }}" class="btn btn-outline-secondary btn-sm me-2">Limpiar Todo</a>
-                        <button type="submit" class="btn btn-primary btn-sm fw-bold px-4 shadow-sm">🔍 Aplicar Búsqueda y Orden</button>
+                    <div class="d-flex gap-2 mt-2 mt-md-0">
+                        <a href="{{ route('st.index') }}" class="btn btn-outline-secondary btn-sm flex-grow-1 flex-md-grow-0">Limpiar Todo</a>
+                        <button type="submit" class="btn btn-primary btn-sm fw-bold px-4 shadow-sm flex-grow-1 flex-md-grow-0">🔍 Aplicar Búsqueda y Orden</button>
                     </div>
                 </div>
             </form>
@@ -127,7 +129,21 @@
                             @endif
                         </td>
                         <td>{{ $ticket->created_at->format('Y-m-d') }}</td>
-                        <td><span class="badge border border-dark text-dark fs-6">{{ $ticket->status }}</span></td>
+                        <td class="text-center align-middle">
+                            @php
+                                $badgeColor = 'bg-secondary text-white'; // Gris por defecto para Cancelado
+                                if($ticket->status === 'Pendiente') {
+                                    $badgeColor = 'bg-danger text-white'; // Rojo
+                                } elseif($ticket->status === 'En Curso') {
+                                    $badgeColor = 'bg-warning text-dark'; // Amarillo
+                                } elseif($ticket->status === 'Completado') {
+                                    $badgeColor = 'bg-success text-white'; // Verde
+                                }
+                            @endphp
+                            <span class="badge {{ $badgeColor }} px-3 py-2 fs-6 shadow-sm border border-light border-opacity-10">
+                                {{ $ticket->status }}
+                            </span>
+                        </td>
                         <td>
                         @if($ticket->status === 'Pendiente')
                             @if($ticket->materiales_entregados && $ticket->precio_reparacion > 0)
@@ -165,3 +181,4 @@
 
 </section>
 @endsection
+

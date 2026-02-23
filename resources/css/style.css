@@ -57,7 +57,7 @@ body {
 }
 
 /* =========================================
-   ESTILOS ESPECÍFICOS DE LA APP (ESTADOS)
+   ESTILOS ESPECÍFICOS DE LA APP (ESTADOS MODO DÍA)
    ========================================= */
 /* Mantenemos tus colores exactos para las filas de las tablas */
 .status-pendiente td {
@@ -71,4 +71,90 @@ body {
 .status-completado td {
     background-color: var(--bg-completado) !important;
     color: var(--color-completado) !important;
+}
+
+/* ========================================================
+   PERSONALIZACIÓN DEL MODO OSCURO (REDUCCIÓN DE FATIGA)
+   ======================================================== */
+[data-bs-theme="dark"] {
+    /* 1. Fondo principal de la pantalla (Negro mate profundo) */
+    --bs-body-bg: #101010;
+    
+    /* 2. Fondo de las tarjetas (Gris más claro para elevarlas) */
+    --bs-card-bg: #1e1e1e;
+    --bs-body-color: #e0e0e0; 
+    
+    /* 3. Bordes sutiles */
+    --bs-border-color: #333333;
+    --bs-card-border-color: #333333;
+}
+
+/* Forzar color en tarjetas y modales */
+[data-bs-theme="dark"] .bg-white,
+[data-bs-theme="dark"] .bg-light,
+[data-bs-theme="dark"] .card-body.bg-light,
+[data-bs-theme="dark"] .card-header.bg-light {
+    background-color: #1e1e1e !important; /* Mismo color de las tarjetas */
+    color: #e0e0e0 !important;
+}
+
+/* ========================================================
+   REPARACIÓN DE LAS TABLAS (CABECERAS Y FILAS)
+   ======================================================== */
+
+/* 1. MATAR EL BLANCO/AZUL DE LAS CABECERAS: Obligamos a que sean gris oscuro elegante */
+[data-bs-theme="dark"] table thead th,
+[data-bs-theme="dark"] table thead tr,
+[data-bs-theme="dark"] .table-light th,
+[data-bs-theme="dark"] .table-primary th,
+[data-bs-theme="dark"] .table-primary td {
+    background-color: #2c2c2c !important; 
+    color: #f8f9fa !important;
+    border-color: #444 !important;
+    border-bottom: 2px solid #555 !important;
+}
+
+/* 2. ACLARAR LAS FILAS: Para que no parezcan un hueco y coincidan con las tarjetas */
+[data-bs-theme="dark"] table tbody tr td,
+[data-bs-theme="dark"] .table {
+    background-color: #1e1e1e !important; 
+    color: #d1d1d1 !important;
+    border-color: #333 !important;
+}
+
+/* ========================================================
+   ESTILOS DE ESTADOS (TRANSLÚCIDOS Y CON PRIORIDAD)
+   ======================================================== */
+/* Se añade "table tbody tr" a la regla para que le gane a la regla de arriba */
+[data-bs-theme="dark"] table tbody tr.status-pendiente td,
+[data-bs-theme="dark"] .status-pendiente td {
+    background-color: rgba(220, 53, 69, 0.15) !important; 
+    color: #ffb3b8 !important; 
+}
+
+[data-bs-theme="dark"] table tbody tr.status-en-curso td,
+[data-bs-theme="dark"] .status-en-curso td {
+    background-color: rgba(253, 126, 20, 0.15) !important; 
+    color: #ffdf80 !important; 
+}
+
+[data-bs-theme="dark"] table tbody tr.status-completado td,
+[data-bs-theme="dark"] .status-completado td {
+    background-color: rgba(40, 167, 69, 0.15) !important; 
+    color: #a3e4b7 !important; 
+}
+
+/* Suavizar los campos de texto y filtros */
+[data-bs-theme="dark"] .form-control,
+[data-bs-theme="dark"] .form-select {
+    background-color: #2a2a2a !important;
+    border-color: #444 !important;
+    color: #e0e0e0 !important;
+}
+
+[data-bs-theme="dark"] .form-control:focus,
+[data-bs-theme="dark"] .form-select:focus {
+    background-color: #333 !important;
+    border-color: #0d6efd !important;
+    color: #fff !important;
 }
