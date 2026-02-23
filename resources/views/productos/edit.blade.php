@@ -15,7 +15,7 @@
                 @csrf
                 @method('PUT') <div class="row">
                     <div class="col-md-4 mb-4">
-                        <label class="form-label fw-bold">Código del Producto (*)</label>
+                        <label class="form-label fw-bold">Código del Producto </label>
                         <input type="text" name="codigo_producto" class="form-control @error('codigo_producto') is-invalid @enderror" value="{{ old('codigo_producto', $producto->codigo_producto) }}" required>
                         @error('codigo_producto')
                             <div class="invalid-feedback fw-bold">{{ $message }}</div>
@@ -23,7 +23,7 @@
                     </div>
 
                     <div class="col-md-8 mb-4">
-                        <label class="form-label fw-bold">Nombre / Descripción (*)</label>
+                        <label class="form-label fw-bold">Nombre / Descripción </label>
                         <input type="text" name="descripcion" class="form-control" value="{{ old('descripcion', $producto->descripcion) }}" required>
                     </div>
 

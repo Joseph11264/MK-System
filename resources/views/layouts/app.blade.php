@@ -189,6 +189,13 @@
                 </li>
                  @endif
 
+                 @if(in_array(auth()->user()->rol, ['SuperAdmin', 'Administracion', 'Produccion', 'Almacen']))
+                <li class="nav-item mb-2 mt-3">
+                    <small class="text-muted text-uppercase fw-bold ms-2">Fábrica</small>
+                    <a class="nav-link text-body rounded border border-light custom-hover mt-1" href="{{ route('ordenes.index') }}">🏭 Órdenes de Producción</a>
+                </li>
+                @endif
+
                 @if(in_array(auth()->user()->rol, ['SuperAdmin', 'Administracion', 'Produccion', 'Almacen', 'ServicioTecnico']))
                 <li class="nav-item mb-2">
                     <a class="nav-link text-body rounded border border-light custom-hover" href="{{ route('productos.index') }}">📦 Catálogo de Productos</a>

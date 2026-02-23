@@ -6,6 +6,9 @@
 <section class="main-content-wrapper">
     <div class="d-flex justify-content-between align-items-center mb-3">
         <h2 class="text-primary m-0">🔎 Historial de Movimientos</h2>
+        @if(in_array(auth()->user()->rol, ['SuperAdmin', 'Administracion', 'Produccion']))
+            <a href="{{ route('formulas.manage', $producto->id) }}" class="btn btn-info fw-bold text-dark shadow-sm">🛠️ Gestionar Fórmula (BOM)</a>
+         @endif
         <a href="{{ route('productos.index') }}" class="btn btn-outline-secondary fw-bold">Volver al catálogo</a>
     </div>
 

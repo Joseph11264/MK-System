@@ -47,13 +47,12 @@ class ProductoController
         $request->validate([
             'codigo_producto' => ['required', 'string', 'regex:/^\d{6}[A-Za-z]?$/', 'unique:productos,codigo_producto'],
             'descripcion' => 'required|string|max:255',
+            'unidad_medida' => 'required|string|max:10',
             'familia_id' => 'nullable|exists:familias,id',
-            // Añadimos las reglas estrictas de formato y peso (2048 KB = 2MB)
             'imagen' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048' 
         ], [
             'codigo_producto.regex' => '⚠️ El código debe tener exactamente 6 números y una letra opcional.',
             'codigo_producto.unique' => '⚠️ Este código de producto ya existe.',
-            // Nuevos mensajes de error para la imagen
             'imagen.image' => '⚠️ El archivo subido debe ser una imagen.',
             'imagen.mimes' => '⚠️ Solo se permiten imágenes en formato JPG, PNG o WEBP.',
             'imagen.max' => '⚠️ La imagen es muy pesada. El tamaño máximo es de 2MB.'
@@ -101,19 +100,15 @@ class ProductoController
 
         $producto = Producto::findOrFail($id);
 
-        // Validamos asegurándonos de que el código no se repita con OTRO producto,
-        // pero ignorando el ID del producto actual para que no dé error consigo mismo.
         $request->validate([
-            // LA MAGIA OCURRE AQUÍ: Añadimos la excepción del ID actual
             'codigo_producto' => ['required', 'string', 'regex:/^\d{6}[A-Za-z]?$/', 'unique:productos,codigo_producto,' . $id],
             'descripcion' => 'required|string|max:255',
+            'unidad_medida' => 'required|string|max:10',
             'familia_id' => 'nullable|exists:familias,id',
-            // Añadimos las reglas estrictas de formato y peso (2048 KB = 2MB)
             'imagen' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048' 
         ], [
             'codigo_producto.regex' => '⚠️ El código debe tener exactamente 6 números y una letra opcional.',
             'codigo_producto.unique' => '⚠️ Este código de producto ya existe.',
-            // Nuevos mensajes de error para la imagen
             'imagen.image' => '⚠️ El archivo subido debe ser una imagen.',
             'imagen.mimes' => '⚠️ Solo se permiten imágenes en formato JPG, PNG o WEBP.',
             'imagen.max' => '⚠️ La imagen es muy pesada. El tamaño máximo es de 2MB.'

@@ -105,7 +105,7 @@
                         <input type="hidden" name="guardar_diagnostico" value="1">
                         
                         <div class="mb-3">
-                            <label class="fw-bold mb-1">Diagnóstico de la Falla / Reparación Efectuada (*):</label>
+                            <label class="fw-bold mb-1">Diagnóstico de la Falla / Reparación Efectuada :</label>
                             <textarea name="diagnostico" class="form-control border-info" rows="3" placeholder="Describe detalladamente el estado del equipo..." required>{{ $ticket->diagnostico }}</textarea>
                         </div>
 

@@ -1,0 +1,184 @@
+==============================================================================
+                        MANUAL DE USUARIO - SISTEMA MK
+==============================================================================
+Versión del Documento: 1.0
+Fecha de Actualización: 23/02/2026
+==============================================================================
+
+ÍNDICE DE CONTENIDOS
+--------------------
+1. Introducción y Acceso
+2. Panel Principal (Dashboard)
+3. Módulo de Requisiciones (Almacén)
+4. Módulo de Servicio Técnico (Reparaciones)
+5. Gestión de Inventario (Productos y Familias)
+6. Directorio de Clientes
+7. Administración de Usuarios
+8. Módulo de Producción (Mini-ERP)
+9. Solución de Problemas Comunes
+
+==============================================================================
+1. INTRODUCCIÓN Y ACCESO
+==============================================================================
+El Sistema MK es una plataforma web diseñada para administrar el flujo de trabajo
+de la empresa, controlando desde la salida de materiales del almacén hasta la
+gestión de reparaciones de equipos de clientes.
+
+>> CÓMO INGRESAR:
+   1. Abra su navegador web (Chrome, Firefox, Edge).
+   2. Ingrese la dirección web del sistema.
+   3. Verá una pantalla de "Iniciar Sesión".
+   4. Ingrese su "Usuario" y "Contraseña".
+   5. Haga clic en el botón "Ingresar".
+
+>> OLVIDÉ MI CONTRASEÑA:
+   - Haga clic en "¿Olvidaste tu contraseña?" en la pantalla de inicio.
+   - El sistema le pedirá su Usuario y Nombre exacto para verificar su identidad.
+   - Podrá establecer una nueva contraseña inmediatamente.
+
+==============================================================================
+2. PANEL PRINCIPAL (DASHBOARD)
+==============================================================================
+Al entrar, verá el Panel de Control. Esta es la pantalla de resumen que muestra:
+
+- Tarjetas de Resumen: Cantidad de tickets abiertos, requisiciones pendientes, etc.
+- Gráficas Estadísticas: Visualización rápida del rendimiento del mes.
+- Menú Lateral: Ubicado a la izquierda, permite navegar entre las distintas
+  secciones del sistema (Requisiciones, Servicio Técnico, Usuarios, etc.).
+
+==============================================================================
+3. MÓDULO DE REQUISICIONES (ALMACÉN)
+==============================================================================
+Este módulo se utiliza para solicitar materiales al almacén o registrar devoluciones.
+
+>> TIPOS DE MOVIMIENTO:
+   - Requisición: Salida de material (para usar en una reparación o venta).
+   - Devolución: Entrada de material (sobrantes o retorno al inventario).
+
+>> PASOS PARA CREAR UNA REQUISICIÓN:
+   1. Vaya al menú "Requisiciones" > "Nueva Requisición".
+   2. Seleccione el Tipo (Requisición o Devolución).
+   3. Ingrese los datos del Técnico responsable.
+   4. En la sección "Productos", busque el repuesto por código o nombre.
+   5. Indique la cantidad y haga clic en "Agregar". Puede agregar varios productos.
+   6. Al finalizar, haga clic en "Guardar Requisición".
+
+>> ESTADOS DE UNA REQUISICIÓN:
+   - Pendiente: Recién creada. Aún puede ser editada por el creador.
+   - En Curso: Almacén la está preparando. Ya no se puede editar, solo cancelar.
+   - Completado: El material ha sido entregado. Proceso finalizado.
+   - Cancelado: La solicitud fue anulada.
+
+*Nota: Solo los usuarios de Almacén o Administración pueden avanzar el estado.*
+
+==============================================================================
+4. MÓDULO DE SERVICIO TÉCNICO (REPARACIONES)
+==============================================================================
+Aquí se gestionan los equipos que traen los clientes para revisión o garantía.
+
+>> CREAR UN NUEVO TICKET (RECEPCIÓN):
+   1. Vaya a "Servicio Técnico" > "Nuevo Ticket".
+   2. Seleccione un Cliente existente o registre uno nuevo al instante.
+   3. Ingrese los datos del equipo (Marca, Modelo, Serial).
+   4. Describa la falla reportada y el estado físico del equipo (rayones, golpes).
+   5. Seleccione el Tipo: "Reparación" (con costo) o "Garantía" (sin costo).
+   6. Guardar. Se generará un PDF de recepción para el cliente.
+
+>> GESTIÓN DEL TICKET:
+   - Diagnóstico: El técnico agrega notas sobre la falla real.
+   - Repuestos: Se pueden vincular productos del inventario al ticket.
+   - Mano de Obra: Se define el costo del servicio.
+
+>> CERRAR UN TICKET:
+   Para marcar un ticket como "Completado", el sistema validará:
+   1. Que se haya definido un precio (si es reparación).
+   2. Que los repuestos utilizados hayan sido descargados del inventario.
+   
+   *Al finalizar, se puede enviar el reporte automáticamente por correo al cliente.*
+
+==============================================================================
+5. GESTIÓN DE INVENTARIO (PRODUCTOS Y FAMILIAS)
+==============================================================================
+Solo accesible para Almacén, Administración y SuperAdmin.
+
+>> PRODUCTOS:
+   - Catálogo maestro de todos los repuestos y artículos.
+   - Permite ver el stock actual, código y precio base.
+   - Use los filtros para buscar rápidamente por nombre o familia.
+
+>> FAMILIAS:
+   - Permite organizar los productos en categorías (ej. "Pantallas", "Baterías").
+   - Ayuda a mantener el orden en los reportes y búsquedas.
+
+==============================================================================
+6. DIRECTORIO DE CLIENTES
+==============================================================================
+Base de datos de todas las personas o empresas atendidas.
+
+- Historial: Al entrar al perfil de un cliente, puede ver todos los equipos
+  que ha traído y las reparaciones realizadas anteriormente.
+- Búsqueda: Puede buscar por Nombre, Cédula/RUT o Teléfono.
+
+==============================================================================
+7. ADMINISTRACIÓN DE USUARIOS
+==============================================================================
+Exclusivo para el rol "SuperAdmin".
+
+>> ROLES DISPONIBLES:
+   1. SuperAdmin: Acceso total al sistema. Puede crear/borrar usuarios.
+   2. Administracion: Acceso a reportes, finanzas y supervisión de tickets.
+   3. ServicioTecnico: Solo puede gestionar tickets y ver sus asignaciones.
+   4. Almacen: Gestión de requisiciones, productos e inventario.
+   5. Produccion: (Rol específico para visualización de procesos).
+
+>> CREAR USUARIO:
+   - Requiere Nombre, Nombre de Usuario (único), Contraseña y Rol.
+
+==============================================================================
+8. MÓDULO DE PRODUCCIÓN (MINI-ERP)
+==============================================================================
+Este módulo permite gestionar la fabricación de productos a partir de materias primas.
+
+>> GESTIÓN DE FÓRMULAS (RECETAS):
+   1. Vaya a "Inventario" > "Productos".
+   2. Busque el producto final (ej. "Lámpara LED") y haga clic en el ícono de "Fórmula".
+   3. Agregue los ingredientes necesarios (ej. "Cable", "Bombillo") y sus cantidades.
+   *Importante: Sin una fórmula definida, no se puede crear una orden de producción.*
+
+>> ÓRDENES DE PRODUCCIÓN (OP):
+   1. Vaya a "Producción" > "Nueva Orden".
+   2. Seleccione el producto a fabricar y la cantidad.
+   3. Asigne un Técnico responsable.
+   4. El sistema verificará automáticamente si hay suficiente stock de todos los ingredientes.
+      - Si falta material, mostrará una alerta y no dejará crear la orden.
+      - Si hay material, descontará los ingredientes del inventario inmediatamente.
+   
+   *Al finalizar la fabricación, cambie el estado a "Completado" para que el producto
+   terminado ingrese al stock disponible para la venta.*
+
+==============================================================================
+9. SOLUCIÓN DE PROBLEMAS COMUNES
+==============================================================================
+
+P: ¿Por qué no puedo editar una Requisición?
+R: Verifique el estado. Si está "En Curso" o "Completado", ya no es editable
+   por seguridad. Contacte a Administración si hubo un error grave.
+
+P: No me aparecen productos al buscar en Servicio Técnico.
+R: Asegúrese de que los productos estén registrados en el módulo "Productos"
+   y que tengan stock disponible.
+
+P: El sistema no me deja cerrar el ticket de reparación.
+R: El sistema exige que indique qué repuestos usó y el precio final. Si fue
+   solo revisión, asegúrese de indicarlo en las observaciones.
+
+P: ¿Cómo imprimo el comprobante de nuevo?
+R: En la lista de Requisiciones o Tickets, hay un botón con ícono de impresora
+   o PDF a la derecha de cada fila.
+
+==============================================================================
+CONTACTO DE SOPORTE
+==============================================================================
+Si experimenta un error técnico (pantalla roja o mensajes de código), tome una
+captura de pantalla y envíela al departamento de sistemas.
+==============================================================================

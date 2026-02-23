@@ -9,6 +9,10 @@
         @if(!in_array(auth()->user()->rol, ['Produccion', 'Almacen', 'ServicioTecnico']))
             <a href="{{ route('productos.create') }}" class="btn btn-success fw-bold shadow-sm">➕ Nuevo Producto</a>
         @endif
+
+        @if(in_array(auth()->user()->rol, ['SuperAdmin', 'Administracion', 'Almacen']))
+            <a href="{{ route('inventario.ajuste') }}" class="btn btn-warning fw-bold text-dark shadow-sm ms-2">⚖️ Ajuste de Stock</a>
+        @endif
     </div>
 
     <div class="card mb-4 shadow-sm border-0">
@@ -48,6 +52,7 @@
                         <th>Código</th>
                         <th>Descripción del Producto</th>
                         <th>Familia</th>
+                        <th class="text-center">Stock Actual</th>
                         <th class="text-center">Acciones</th>
                     </tr>
                 </thead>
@@ -70,6 +75,11 @@
                                 <span class="text-muted">-</span>
                             @endif
                         </td>
+                        
+                        <td class="text-center fs-5 fw-bold {{ $producto->stock <= 0 ? 'text-danger' : 'text-success' }}">
+                            {{ $producto->stock_format }}
+                        </td>
+                        
                         <td class="text-center">
                             <div class="d-flex justify-content-center gap-2">
                                 <a href="{{ route('productos.show', $producto->id) }}" class="btn btn-sm btn-outline-primary" title="Ver Historial">🔎</a>
@@ -86,7 +96,7 @@
                     </tr>
                     @empty
                     <tr>
-                        <td colspan="5" class="text-center py-4 text-muted">No se encontraron productos con estos filtros.</td>
+                        <td colspan="6" class="text-center py-4 text-muted">No se encontraron productos con estos filtros.</td>
                     </tr>
                     @endforelse
                 </tbody>

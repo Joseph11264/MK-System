@@ -16,7 +16,7 @@
 
                 <div class="row">
                     <div class="col-md-4 mb-4">
-                        <label class="form-label fw-bold">Código del Producto (*)</label>
+                        <label class="form-label fw-bold">Código del Producto </label>
                         <input type="text" name="codigo_producto" class="form-control @error('codigo_producto') is-invalid @enderror" value="{{ old('codigo_producto') }}" placeholder="Ej: 100020" required>
                         @error('codigo_producto')
                             <div class="invalid-feedback fw-bold">{{ $message }}</div>
@@ -24,8 +24,21 @@
                     </div>
 
                     <div class="col-md-8 mb-4">
-                        <label class="form-label fw-bold">Nombre / Descripción (*)</label>
+                        <label class="form-label fw-bold">Nombre / Descripción </label>
                         <input type="text" name="descripcion" class="form-control" value="{{ old('descripcion') }}" placeholder="Ej: Pantalla Original OLED..." required>
+
+                        <div class="col-md-6 mb-3">
+                        <label class="form-label fw-bold text-primary">Unidad de Medida </label>
+                        <select name="unidad_medida" class="form-select bg-body-secondary border-secondary shadow-sm" required>
+                            <option value="Und" {{ old('unidad_medida', $producto->unidad_medida ?? 'Und') == 'Und' ? 'selected' : '' }}>Unidades (Und)</option>
+                            <option value="Mts" {{ old('unidad_medida', $producto->unidad_medida ?? '') == 'Mts' ? 'selected' : '' }}>Metros (Mts)</option>
+                            <option value="Cm" {{ old('unidad_medida', $producto->unidad_medida ?? '') == 'Cm' ? 'selected' : '' }}>Centímetros (Cm)</option>
+                            <option value="Lts" {{ old('unidad_medida', $producto->unidad_medida ?? '') == 'Lts' ? 'selected' : '' }}>Litros (Lts)</option>
+                            <option value="Kgs" {{ old('unidad_medida', $producto->unidad_medida ?? '') == 'Kgs' ? 'selected' : '' }}>Kilogramos (Kgs)</option>
+                        </select>
+                        <small class="text-muted">¿Cómo se consume este material en las fórmulas?</small>
+                    </div>
+
                     </div>
 
                     <div class="col-md-6 mb-4">

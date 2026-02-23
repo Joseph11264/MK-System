@@ -8,6 +8,7 @@ use App\Http\Controllers\ProductoController;
 use App\Http\Controllers\FamiliaController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ClienteController;
+use App\Http\Controllers\InventarioController;
 use App\Models\Cliente;
 use Illuminate\Http\Request;
 
@@ -80,6 +81,22 @@ Route::middleware('auth')->group(function () {
     Route::resource('productos', ProductoController::class);
     Route::resource('familias', App\Http\Controllers\FamiliaController::class)->only(['index', 'store', 'destroy']);
     Route::resource('clientes', App\Http\Controllers\ClienteController::class);
+
+    // Rutas para Ajustes de Inventario
+    Route::get('/inventario/ajuste', [\App\Http\Controllers\InventarioController::class, 'ajuste'])->name('inventario.ajuste');
+    Route::post('/inventario/ajuste', [\App\Http\Controllers\InventarioController::class, 'registrarAjuste'])->name('inventario.registrar_ajuste');
+
+    // Rutas para Formulaciones (BOM)
+    Route::get('/productos/{id}/formula', [\App\Http\Controllers\FormulaController::class, 'manage'])->name('formulas.manage');
+    Route::post('/productos/{id}/formula', [\App\Http\Controllers\FormulaController::class, 'addIngrediente'])->name('formulas.add');
+    Route::delete('/formulas/{id}', [\App\Http\Controllers\FormulaController::class, 'removeIngrediente'])->name('formulas.remove');
+    Route::put('/formulas/{id}', [\App\Http\Controllers\FormulaController::class, 'updateIngrediente'])->name('formulas.update');
+
+    // Rutas de Órdenes de Producción
+    Route::get('/ordenes', [\App\Http\Controllers\OrdenProduccionController::class, 'index'])->name('ordenes.index');
+    Route::get('/ordenes/create', [\App\Http\Controllers\OrdenProduccionController::class, 'create'])->name('ordenes.create');
+    Route::post('/ordenes', [\App\Http\Controllers\OrdenProduccionController::class, 'store'])->name('ordenes.store');
+    Route::post('/ordenes/{id}/status', [\App\Http\Controllers\OrdenProduccionController::class, 'updateStatus'])->name('ordenes.update_status');
     
     // Ruta personalizada adicional para avanzar el estado rápidamente
     Route::patch('requisiciones/{requisicion}/avanzar-estado', [RequisicionController::class, 'avanzarStatus'])

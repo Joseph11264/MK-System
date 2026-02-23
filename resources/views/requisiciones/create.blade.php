@@ -26,7 +26,7 @@
             <legend class="float-none w-auto px-2 fw-bold text-primary fs-5">Información del Técnico</legend>
 
             <div class="mb-4 p-3 bg-body-secondary rounded border">
-                <label class="fw-bold me-3">Tipo de Operación (*):</label>
+                <label class="fw-bold me-3">Tipo de Operación :</label>
                 <div class="form-check form-check-inline">
                     <input class="form-check-input" type="radio" name="tipo" id="tipoReq" value="Requisicion" checked>
                     <label class="form-check-label text-primary fw-bold" for="tipoReq">⬇️ Requisición (Salida)</label>
@@ -56,8 +56,8 @@
                 <table class="table table-bordered align-middle" id="productosTable">
                     <thead class="table-secondary">
                         <tr>
-                            <th style="width: 25%;">Código de Producto (*)</th>
-                            <th style="width: 15%;">Cantidad (*)</th>
+                            <th style="width: 25%;">Código de Producto </th>
+                            <th style="width: 15%;">Cantidad </th>
                             <th style="width: 50%;">Observación (Opcional)</th>
                             <th style="width: 10%; text-align: center;">Acción</th>
                         </tr>

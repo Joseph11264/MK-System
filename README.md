@@ -75,6 +75,14 @@ Sistema administrativo web desarrollado en Laravel para la gestión de almacén.
 - **Controlador:** `FamiliaController`.
 - **Funcionalidad:** Organización de productos en familias con rangos de códigos.
 
+#### J) Módulo de Producción (Mini-ERP) (23/02/2026)
+- **Controladores:** `FormulaController`, `OrdenProduccionController`.
+- **Modelos:** `Formula`, `OrdenProduccion`.
+- **Funcionalidad:** 
+    * Gestión de Fórmulas (Recetas): Definición de ingredientes por producto.
+    * Órdenes de Producción: Creación de lotes, validación de stock de materia prima.
+    * Movimientos Automáticos: Salida de insumos al crear la orden y entrada de producto terminado al completarla.
+
 ## 4. NOTAS DE DESPLIEGUE
 - Asegurarse de ejecutar las migraciones si hay cambios en la BD.
 - Verificar que los usuarios en la base de datos tengan el rol 'SuperAdmin' textualmente.
